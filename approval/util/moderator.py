@@ -5,6 +5,7 @@ from __future__ import absolute_import
 class Moderator(object):
     """ Moderator class, where you define moderation mechanisms for your models """
     model = None  # Model class to moderate
+    fields = []
 
     # Getter
     def auto_moderate(self, obj):
