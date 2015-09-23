@@ -10,6 +10,7 @@ from django.conf import settings
 
 class ApprovableModel(models.Model):
     """ Model mixin to enable moderation of edits to an object """
+
     # Constants
     MODERATION = ((None, _("Pending")), (False, _("Refused")), (True, _("Approved")))
 
@@ -70,6 +71,11 @@ class ApprovableModel(models.Model):
         if request is None or request.user.has_perm('approval.can_moderate_entries'):
             self.approval_moderator = getattr(request, 'user', None)
             self.approval_info = reason or pgettext_lazy('approval_entry', "You may not pass!")
+
+    # Overrides
+    def save(self, *args, **kwargs):
+        # TODO: Override approvable saving mechanism
+        return super().save(*args, **kwargs)
 
     # Metadata
     class Meta:
