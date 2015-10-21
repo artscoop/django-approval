@@ -1,2 +1,2 @@
 # coding: utf-8
-from .approval import ApprovedModel, ApprovalModel
+from .approval import ApprovedModel
