@@ -1,6 +1,6 @@
 # coding: utf-8
 """ Form mixins for approvable models """
-from approval.models.approval import ApprovedModel
+from approval.models import ApprovedModel
 
 
 class ApprovableForm():
@@ -9,5 +9,5 @@ class ApprovableForm():
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance', None)
         if instance and isinstance(instance, ApprovedModel):
-            instance._copy_from_sandbox()
+            instance.approval._update_source()
         super().__init__(*args, **kwargs)

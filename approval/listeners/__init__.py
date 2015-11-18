@@ -1,2 +1,2 @@
 # coding: utf-8
-from .approvable import pre_save_approvable, post_save_approvable
+from .approvable import before_save, after_save
