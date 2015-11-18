@@ -1,5 +1,6 @@
 # coding: utf-8
 """ Approval models. """
+from annoying.fields import AutoOneToOneField
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError, ImproperlyConfigured
@@ -21,6 +22,7 @@ def ApprovalModel(base):
     - Your form logic may set instance.request = request.
     :type base: django.db.models.Model & ApprovedModel
     """
+
     table_name = '{0}_approval'.format(base._meta.db_table)
     table_app = base._meta.app_label
     table_model_name = base._meta.model_name
@@ -34,15 +36,16 @@ def ApprovalModel(base):
 
         # Configuration
         approval_fields = []
+        approval_default = {}
         auto_approve_staff = True
-        auto_approve_empty_fields = True
+        auto_approve_new = False
 
         # Constants
         MODERATION = ((None, _("Pending")), (False, _("Refused")), (True, _("Approved")))
         DRAFT = ((False, _("Waiting for moderation")), (True, _("Draft")))
 
         # Fields
-        source = models.OneToOneField(base, null=False, on_delete=models.CASCADE, related_name='approval')
+        source = AutoOneToOneField(base, null=False, on_delete=models.CASCADE, related_name='approval')
         sandbox = PickledObjectField(default={}, blank=False, verbose_name=_("Data"))
         approved = models.NullBooleanField(default=None, choices=MODERATION, verbose_name=pgettext_lazy('approval_entry', "Moderated"))
         moderator = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, blank=True, null=True, verbose_name=pgettext_lazy('approval_entry', "Moderated by"))
@@ -51,56 +54,136 @@ def ApprovalModel(base):
         draft = models.BooleanField(default=True, choices=DRAFT, verbose_name=pgettext_lazy('approval_entry', "Draft"))
         updated = models.DateTimeField(auto_now=True, verbose_name=pgettext_lazy('approval_entry', "Updated"))
 
-        # Getter
-        def is_sandbox_valid(self):
-            """ Return whether sandbox data is valid or not """
-            for field in self.sandbox.get('fields', {}):
-                if not hasattr(self.source, field):
-                    return False
-            return True
-
-        def has_sandbox_diff(self):
-            """ Is the object different in the sandbox from the public view ? """
-            checked_fields = [field for field in self.sandbox.get('fields', {}) if hasattr(self.source, field)]
-            for field in checked_fields:
-                if self.sandbox['fields'][field] != getattr(self.source, field):
-                    return True
-            return False
-
-        def get_sandbox_fields(self):
-            return getattr(self, 'approval_fields', [])
-
-        # Setter
-        def update_source(self, force=True, empty_only=False):
+        # API
+        def _update_source(self, default=False, save=False):
             """
-            Update the target object with the current sandbox data
-            :param force: update the object even if one or several sandboxed fields do not match the current schema
-            :type force: bool
+            Update fields of the source to reflect the state of the moderation queue
+            :param default: change the source with the approval_default values only
+            :param save: must we change the source status permanently
             """
-            original = dict()
-            for field in self.sandbox.get('fields', {}):
-                original[field] = getattr(self.source, field)
-                if not empty_only or not self.sandbox['fields'][field]:
+            original = dict()  # Revert to target values in case of failure
+            if default is False:
+                for field in self._get_fields_data():
+                    original[field] = getattr(self.source, field)
                     setattr(self.source, field, self.sandbox['fields'][field])
+            else:
+                for field in self.approval_default.keys():
+                    setattr(self.source, field, self.approval_default[field])
+
             try:
                 self.source.clean_fields()  # will fail with ValidationError if there is a problem
-                self.source._approval_done = True
-                self.source.save()
-            except ValidationError as exc:
-                if force:
-                    for key in exc.message_dict:
-                        if hasattr(self.source, key):
-                            setattr(self.source, key, original[key])
-                    self.source._approval_done = True
+                if save:
                     self.source.save()
-                else:
-                    raise
+                return True
+            except ValidationError as exc:
+                for key in exc.message_dict:
+                    if hasattr(self.source, key):
+                        setattr(self.source, key, original[key])
+                if save:
+                    self.source.save()
+                return True
 
+        def _update_sandbox(self, slot=None, source=None):
+            """
+            Update fields of the sandbox to reflect the state of the source
+            """
+            slot = slot or "fields"
+            source = source or self.source
+            fields = self._get_fields()
+            values = {key: getattr(source, key) for key in fields if hasattr(source, key)}
+            self.sandbox[slot] = values
+            self.approved = None
+            self.save()
+
+        def submit_approval(self):
+            """
+            Set the status of the object to waiting for moderation
+            """
+            if self.draft is True:
+                self.draft = False
+                self.save()
+                return True
+            return False
+
+        def is_draft(self):
+            """
+            Returns if the object is submitted for approval or not
+            :returns: True if not submitted, False if waiting for approval
+            """
+            return self.draft
+
+        def _can_bypass_approval(self):
+            """
+            Returns whether the status of the object really needs an approval
+            :returns: True if the status is not potentially harmful.
+            """
+            return self._get_diff() is None
+
+        def _get_invalid_fields(self):
+            """
+            Returns the names of the data fields that cannot be used
+            to update the source.
+            :returns: a list of field names
+            :rtype: list | None
+            """
+            fields = self._get_fields()
+            source_fields = self.source._meta.get_all_field_names()
+            return [field for field in fields if field in source_fields] or None
+
+        def _get_fields(self):
+            """
+            Returns the list of monitored field names
+            :returns: a list of strings
+            """
+            return self.approval_fields
+
+        def _get_fields_data(self):
+            """
+            Returns a dictionary of the data in the sandbox
+            :return: a dict
+            """
+            return self.sandbox.get('fields', {})
+
+        def _get_diff(self):
+            """
+            Return the difference between the approval data and the source
+            :returns: a list of field names that are different in the source
+            :rtype: list | None
+            """
+            data = self._get_fields_data()
+            source_data = {field: getattr(self.source, field) for field in self._get_fields()}
+            return [key for key in data.keys() if data[key] != source_data[key]] or None
+
+        def _is_authorized(self, user):
+            """
+            Returns whether an user has approval bypass rights
+            :param user: user or list of users, or even None
+            """
+            if user:
+                users = [user] if not isinstance(user, list) else user
+                for user in users:
+                    if user.has_perm('{0}.can_moderate_{1}'.format(table_app, table_model_name)):
+                        return user
+            return False
+
+        def _auto_process(self, authors=None, update=False):
+            """
+            Approve or deny edits automatically.
+            :param author: author or list of authors or None
+            :param update: define if the process is an update
+            """
+            authorized = self._is_authorized(authors) or self._can_bypass_approval()
+            if authorized is not False or (self.auto_approve_new and not update):
+                self.approve(user=authorized, save=True)
+            self.auto_process(authors=authors)
+
+        # Actions
         def approve(self, user=None, save=False):
             """ Approve pending object state """
             self.approval_date = timezone.now()
             self.approved = True
             self.moderator = user
+            self.draft = False
             self.info = pgettext_lazy('approval_entry', "Congratulations, your edits have been approved.")
             self.update_source()
             if save:
@@ -110,36 +193,23 @@ def ApprovalModel(base):
             """ Deny pending edits on object """
             self.moderator = user
             self.approved = False
+            self.draft = False
             self.info = reason or pgettext_lazy('approval_entry', "Your edits have been refused.")
             if save:
                 self.save()
 
-        def _auto_process(self, user=None):
-            """ Approve or deny edits automatically. """
-
-            # Approve staff users with appropriate permissions
-            users = self._get_users()
-            users = list(users) if users else users
-            if isinstance(users, (list, tuple, set)):
-                for user in users:
-                    if isinstance(user, AbstractUser):
-                        if self.auto_approve_staff and user.has_perm('{0}.can_moderate_{1}'.format(table_app, table_model_name)):
-                            self.approve(save=True)
-                            return True
-            # Approve empty fields
-            if self.auto_approve_empty_fields:
-                self.update_source(empty_only=True)
-
         # Overridable
-        def _get_users(self):
+        def auto_process(self, authors=None):
+            """
+            User-defined auto-processing
+            """
+            return None
+
+        def _get_authors(self):
             """
             Return the authors of the source instance. Override.
             :rtype: list | tuple | None
             """
-            return None
-
-        def auto_process(self, user=None):
-            """ User-defined auto-processing """
             return None
 
         # Overrides
@@ -154,9 +224,13 @@ def ApprovalModel(base):
         # Metadata
         class Meta:
             abstract = True
+            db_table = table_name
+            app_label = 'content'
+            verbose_name = "{name} approval".format(name=name)
+            verbose_name_plural = "{name} approval".format(name=name_plural)
             permissions = [['can_moderate_{0}'.format(table_model_name), "Can moderate {name}".format(name=name_plural)]]
 
-    if not ApprovedModel in base.__bases__:
+    if ApprovedModel not in base.__bases__:
         base.__bases__ += (ApprovedModel,)
     if issubclass(base, ApprovedModel):
         return Approval
@@ -168,57 +242,30 @@ class ApprovedModel(models.Model):
     """ Moderated table mixin """
 
     # Getter
-    def is_waiting_for_approval(self):
-        Model = self._meta.get_field('approval').model
-        try:
-            return self.approval.draft is False
-        except Model.DoesNotExist:
-            return False
+    def _get_authors(self):
+        """
+        Returns the authors of the object
+        """
+        if hasattr(self, 'request'):
+            return [self.request.user]
+        return self.approval._get_authors()
 
     # Actions
-    def _copy_to_sandbox(self, save=True):
+    def _revert(self):
         """
-        Copy monitored fields to the sandbox
-        :type self: django.db.models.Model
+        Revert the instance to its last saved state
+        :return: True if revert was possible, else False
         """
-        Model = self._meta.get_field('approval').model
+        Model = self._meta.model
         try:
-            approval = getattr(self, 'approval', None)
-        except Model.DoesNotExist:
-            approval = Model.objects.create(source=self, approved=False)
-        fields = approval.get_sandbox_fields()
-        values = {key: getattr(self, key) for key in fields if hasattr(self, key)}
-        approval.sandbox['fields'] = values
-        approval.approved = None
-        if save:
-            approval.save()
+            self = Model.objects.get(self.pk)
+            return True
+        except:
+            return False
 
-    def _copy_from_sandbox(self):
-        """
-        Copy sandboxed fields to the model
-        """
-        Model = self._meta.get_field('approval').model
-        try:
-            approval = getattr(self, 'approval')
-            if approval.draft is True:
-                fields = approval.get_sandbox_fields()
-                for field in fields:
-                    setattr(self, field, approval.sandbox['fields'][field])
-        except Model.DoesNotExist:
-            pass
-
-    def _submit_to_approval(self):
+    def _submit_approval(self):
         """ Undraft """
-        Model = self._meta.get_field('approval').model
-        try:
-            approval = getattr(self, 'approval')
-            if approval.draft is True:
-                approval.draft = False
-                approval.save()
-                return True
-        except Model.DoesNotExist:
-            pass
-        return False
+        return self.approval.submit_approval()
 
     # Meta
     class Meta:

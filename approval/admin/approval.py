@@ -1,6 +1,4 @@
 # coding: utf-8
-from __future__ import absolute_import
-
 from django.contrib.admin.options import ModelAdmin
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -48,6 +46,6 @@ class ApprovableAdmin(ModelAdmin):
         """ Return the desired object, augmented with a request attribute """
         obj = super().get_object(request, object_id)
         if isinstance(obj, ApprovedModel):
-            obj._copy_from_sandbox()
-        obj.request = request
+            obj.approval._update_source(update=False, save=False)
+            obj.request = request
         return obj

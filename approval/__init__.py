@@ -1,6 +1,4 @@
 # coding: utf-8
-from __future__ import absolute_import
-
 from django.apps.config import AppConfig
 from django.utils.translation import gettext_noop
 
