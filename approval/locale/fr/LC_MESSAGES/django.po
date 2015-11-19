@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Steve Kossouho <steve.kossouho@gmail.com>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-19 04:51+0100\n"
+"PO-Revision-Date: 2015-11-19 04:57+0100\n"
+"Last-Translator: Steve Kossouho <steve.kossouho@gmail.com>\n"
+"Language-Team: français <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: __init__.py:7
+msgid "Approval"
+msgstr "Approbation"
+
+#: admin/approval.py:20
+msgid "Deny selected approval requests"
+msgstr "Refuser les demandes de modération sélectionnées"
+
+#: admin/approval.py:25
+msgid "Selected edits have been denied."
+msgstr "Les modification sélectionnées ont été refusées."
+
+#: admin/approval.py:27
+msgid "Approve selected approval requests"
+msgstr "Accepter les demandes de modération sélectionnées"
+
+#: admin/approval.py:32
+msgid "Selected edits have been accepted."
+msgstr "Les modification sélectionnées ont été acceptées."
+
+#: admin/approval.py:34
+msgid "Content"
+msgstr "Contenu"
+
+#: models/approval.py:44
+msgid "Pending"
+msgstr "En attente"
+
+#: models/approval.py:44
+msgid "Refused"
+msgstr "Refusé"
+
+#: models/approval.py:44
+msgid "Approved"
+msgstr "Approuvé"
+
+#: models/approval.py:45
+msgid "Waiting for moderation"
+msgstr "En attente de modération"
+
+#: models/approval.py:45
+msgid "Draft"
+msgstr "Brouillon"
+
+#: models/approval.py:49
+msgid "Data"
+msgstr "Données"
+
+#: models/approval.py:50
+msgctxt "approval_entry"
+msgid "Moderated"
+msgstr "Modéré"
+
+#: models/approval.py:51
+msgctxt "approval_entry"
+msgid "Moderated by"
+msgstr "Modéré par"
+
+#: models/approval.py:52
+msgctxt "approval_entry"
+msgid "Moderated at"
+msgstr "Modéré le"
+
+#: models/approval.py:53
+msgid "Reason"
+msgstr "Raison"
+
+#: models/approval.py:54
+msgctxt "approval_entry"
+msgid "Draft"
+msgstr "Brouillon"
+
+#: models/approval.py:55
+msgctxt "approval_entry"
+msgid "Updated"
+msgstr "Mis à jour"
+
+#: models/approval.py:187
+msgctxt "approval_entry"
+msgid "Congratulations, your edits have been approved."
+msgstr "Félicitations, vos modifications ont été acceptées."
+
+#: models/approval.py:197
+msgctxt "approval_entry"
+msgid "Your edits have been refused."
+msgstr "Vos modifications ont été refusées."
+
+#: models/approval.py:238
+msgid "Your base model must inherit from approval.models.ApprovedModel."
+msgstr "Votre modèle de base doit hériter de approval.models.ApprovedModel."
