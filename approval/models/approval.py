@@ -73,6 +73,7 @@ def ApprovalModel(base):
             try:
                 self.source.clean_fields()  # will fail with ValidationError if there is a problem
                 if save:
+                    self.source._ignore_approval = True
                     self.source.save()
                 return True
             except ValidationError as exc:
@@ -80,6 +81,7 @@ def ApprovalModel(base):
                     if hasattr(self.source, key):
                         setattr(self.source, key, original[key])
                 if save:
+                    self.source._ignore_approval = True
                     self.source.save()
                 return True
 
@@ -117,7 +119,9 @@ def ApprovalModel(base):
             Returns whether the status of the object really needs an approval
             :returns: True if the status is not potentially harmful.
             """
-            return self._get_diff() is None
+            if self._get_diff() is None:
+                return None
+            return False
 
         def _get_invalid_fields(self):
             """
@@ -185,7 +189,7 @@ def ApprovalModel(base):
             self.moderator = user
             self.draft = False
             self.info = pgettext_lazy('approval_entry', "Congratulations, your edits have been approved.")
-            self.update_source()
+            self._update_source(save=True)
             if save:
                 super().save()
 
