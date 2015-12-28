@@ -14,7 +14,7 @@ def before_save(sender, instance, **kwargs):
     Manage data in the approvable item before it is saved
     :type instance: django.db.models.Model | approval.models.ApprovedModel
     """
-    if isinstance(instance, ApprovedModel):
+    if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
         if instance.pk is not None:  # Sandbox updated instances only
             user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
@@ -26,7 +26,7 @@ def after_save(sender, instance, raw, created, **kwargs):
     """
     Manage data in the approvable item after it has been saved
     """
-    if isinstance(instance, ApprovedModel):
+    if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
         if created:
             user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
