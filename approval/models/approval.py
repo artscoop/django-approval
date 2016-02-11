@@ -28,6 +28,7 @@ def ApprovalModel(base):
     table_model_name = base._meta.model_name
     name = base._meta.verbose_name
     name_plural = base._meta.verbose_name_plural
+    reverse_name = 'moderated_{0}_approval'.format(base._meta.model_name)
 
     class Approval(models.Model):
         """
@@ -48,7 +49,8 @@ def ApprovalModel(base):
         source = AutoOneToOneField(base, null=False, on_delete=models.CASCADE, related_name='approval')
         sandbox = PickledObjectField(default={}, blank=False, verbose_name=_("Data"))
         approved = models.NullBooleanField(default=None, choices=MODERATION, verbose_name=pgettext_lazy('approval_entry', "Moderated"))
-        moderator = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, blank=True, null=True, verbose_name=pgettext_lazy('approval_entry', "Moderated by"))
+        moderator = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, blank=True, null=True,
+                                      related_name=reverse_name, verbose_name=pgettext_lazy('approval_entry', "Moderated by"))
         approval_date = models.DateTimeField(null=True, verbose_name=pgettext_lazy('approval_entry', "Moderated at"))
         info = models.TextField(blank=True, verbose_name=_("Reason"))
         draft = models.BooleanField(default=True, choices=DRAFT, verbose_name=pgettext_lazy('approval_entry', "Draft"))
@@ -264,7 +266,7 @@ class ApprovedModel(models.Model):
         try:
             self = Model.objects.get(self.pk)
             return True
-        except:
+        except Model.DoesNotExist:
             return False
 
     def _submit_approval(self):
