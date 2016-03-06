@@ -3,18 +3,18 @@
 from annoying.fields import AutoOneToOneField
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import pgettext_lazy, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from picklefield.fields import PickledObjectField
 
 
 def ApprovalModel(base):
     """
     Define and record a moderation model from a base model.
-    La fonction renvoie une classe héritée de Model et dont les attributs
-    Meta sont dérivés de ceux de <base>.
+
     How to use:
     - Have your monitored model extend ApprovedModel
     - Make another model using ApprovalModel(Monitoredmodelname)
@@ -206,14 +206,13 @@ def ApprovalModel(base):
 
         # Overridable
         def auto_process(self, authors=None):
-            """
-            User-defined auto-processing
-            """
+            """ User-defined auto-processing, the developer should override this """
             return None
 
         def _get_authors(self):
             """
             Return the authors of the source instance. Override.
+
             :rtype: list | tuple | None
             """
             return None

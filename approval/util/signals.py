@@ -2,7 +2,6 @@
 """ Signals sent by the application """
 from django.dispatch.dispatcher import Signal
 
-
 # Sent just before an instance undergoes approval
 pre_approval = Signal(['instance', 'status'])
 

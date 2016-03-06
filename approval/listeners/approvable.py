@@ -1,11 +1,10 @@
 # coding: utf-8
 from copy import deepcopy
 
-from django.db.models.signals import pre_save, post_save
-from django.dispatch.dispatcher import receiver
-
 from approval.models.approval import ApprovedModel
-from approval.util.signals import pre_approval, post_approval
+from approval.util.signals import post_approval, pre_approval
+from django.db.models.signals import post_save, pre_save
+from django.dispatch.dispatcher import receiver
 
 
 @receiver(pre_save)
@@ -20,6 +19,7 @@ def before_save(sender, instance, **kwargs):
             instance.approval._update_sandbox()
             instance._revert()
             instance.approval._auto_process(authors=user, update=True)
+
 
 @receiver(post_save)
 def after_save(sender, instance, raw, created, **kwargs):
