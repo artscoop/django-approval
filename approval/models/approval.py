@@ -2,12 +2,11 @@
 """ Approval models. """
 from annoying.fields import AutoOneToOneField
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
+from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 
@@ -60,6 +59,7 @@ def ApprovalModel(base):
         def _update_source(self, default=False, save=False):
             """
             Update fields of the source to reflect the state of the moderation queue
+
             :param default: change the source with the approval_default values only
             :param save: must we change the source status permanently
             """
@@ -100,9 +100,7 @@ def ApprovalModel(base):
             self.save()
 
         def submit_approval(self):
-            """
-            Set the status of the object to waiting for moderation
-            """
+            """ Set the status of the object to waiting for moderation """
             if self.draft is True:
                 self.draft = False
                 self.save()
@@ -146,6 +144,7 @@ def ApprovalModel(base):
         def _get_fields_data(self):
             """
             Returns a dictionary of the data in the sandbox
+
             :return: a dict
             """
             return self.sandbox.get('fields', {})
@@ -153,6 +152,7 @@ def ApprovalModel(base):
         def _get_diff(self):
             """
             Return the difference between the approval data and the source
+
             :returns: a list of field names that are different in the source
             :rtype: list | None
             """
@@ -175,6 +175,7 @@ def ApprovalModel(base):
         def _auto_process(self, authors=None, update=False):
             """
             Approve or deny edits automatically.
+
             :param author: author or list of authors or None
             :param update: define if the process is an update
             """
@@ -206,7 +207,12 @@ def ApprovalModel(base):
 
         # Overridable
         def auto_process(self, authors=None):
-            """ User-defined auto-processing, the developer should override this """
+            """
+            User-defined auto-processing, the developer should override this
+
+            :param authors: liste d'utilisateurs auteurs du contenu
+            :returns: None. La méthode approuve ou refuse à sa guise.
+            """
             return None
 
         def _get_authors(self):

@@ -1,16 +1,16 @@
 # coding: utf-8
-from copy import deepcopy
 
-from approval.models.approval import ApprovedModel
-from approval.util.signals import post_approval, pre_approval
 from django.db.models.signals import post_save, pre_save
 from django.dispatch.dispatcher import receiver
+
+from approval.models.approval import ApprovedModel
 
 
 @receiver(pre_save)
 def before_save(sender, instance, **kwargs):
     """
     Manage data in the approvable item before it is saved
+
     :type instance: django.db.models.Model | approval.models.ApprovedModel
     """
     if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
@@ -23,9 +23,7 @@ def before_save(sender, instance, **kwargs):
 
 @receiver(post_save)
 def after_save(sender, instance, raw, created, **kwargs):
-    """
-    Manage data in the approvable item after it has been saved
-    """
+    """ Manage data in the approvable item after it has been saved """
     if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
         if created:
             user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
