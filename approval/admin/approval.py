@@ -45,6 +45,6 @@ class ApprovableAdmin(ModelAdmin):
         """ Return the desired object, augmented with a request attribute """
         obj = super().get_object(request, object_id)
         if isinstance(obj, ApprovedModel):
-            obj.approval._update_source(update=False, save=False)
+            obj.approval._update_source(default=False, save=False)
             obj.request = request
         return obj
