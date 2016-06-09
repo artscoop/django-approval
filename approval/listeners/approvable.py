@@ -1,9 +1,8 @@
 # coding: utf-8
 
+from approval.models.approval import ApprovedModel
 from django.db.models.signals import post_save, pre_save
 from django.dispatch.dispatcher import receiver
-
-from approval.models.approval import ApprovedModel
 
 
 @receiver(pre_save)
