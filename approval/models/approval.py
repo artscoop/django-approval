@@ -23,7 +23,7 @@ class ApprovalModel:
     """
 
     def __new__(cls, base, **kwargs):
-        """ Permet d'appeler la classe et de retourner un objet dérivé de Approvalb """
+        """ Allows use of class call to return a class derived from Approval """
         table_name = '{0}_approval'.format(base._meta.db_table)
         table_app = base._meta.app_label
         table_model_name = base._meta.model_name
@@ -223,7 +223,7 @@ class ApprovalModel:
 
                 :rtype: list | tuple | None
                 """
-                return None
+                raise NotImplemented("You must define _get_authors() in your model.")
 
             # Overrides
             def save(self, *args, **kwargs):
@@ -267,13 +267,14 @@ class ApprovedModel(models.Model):
     def _revert(self):
         """
         Revert the instance to its last saved state
+
         :return: True if revert was possible, else False
         """
-        Model = self._meta.model
+        model = self._meta.model
         try:
-            self = Model.objects.get(self.pk)
+            self = model.objects.get(self.pk)
             return True
-        except Model.DoesNotExist:
+        except model.DoesNotExist:
             return False
 
     def _submit_approval(self):
