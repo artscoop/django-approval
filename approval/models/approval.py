@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from picklefield.fields import PickledObjectField
 
+from scoop.core.util.data.typeutil import make_iterable
+
 
 class ApprovalModel:
     """
@@ -32,9 +34,7 @@ class ApprovalModel:
         reverse_name = 'moderated_{0}_approval'.format(base._meta.model_name)
 
         class Approval(models.Model):
-            """
-            Parametrized model
-            """
+            """ Parametrized model """
 
             # Configuration
             approval_fields = []
@@ -168,7 +168,7 @@ class ApprovalModel:
                 :param user: user or list of users, or even None
                 """
                 if user:
-                    users = [user] if not isinstance(user, list) else user
+                    users = make_iterable(user)
                     for user in users:
                         if user.has_perm('{0}.can_moderate_{1}'.format(table_app, table_model_name)):
                             return user

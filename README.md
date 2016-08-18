@@ -17,7 +17,7 @@ You thus create a model derived from `approval.approvalmodel`, like so:
         body = models.TextField()
         published = models.BooleanField(default=True)
         publish = models.DateTimeField(default=None, null=True)
-        
+
 
     class BookApproval(ApprovalModel(Book)):
         """
@@ -30,11 +30,11 @@ You thus create a model derived from `approval.approvalmodel`, like so:
 
         # Getter
         def _get_authors(self):
-            """ Mandatory method to implement """ 
+            """ Mandatory method to implement """
             return self.source.get_authors()
 
 This will change the book model so it is aware of approval data. An
 `approval` attribute will be accessible on every `Book` instance,
 allowing to check field values for the underlying `Approval` instance.
 
-Warning : Monitored models should not be changed in a pre_save signal.
+*Warning* : Monitored models should not be changed in a pre_save signal.
