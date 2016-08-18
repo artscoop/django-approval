@@ -14,7 +14,7 @@ setup(
     author_email='artscoop93@gmail.com',
     description='Approval mechanisms for model instances in Django 1.8+',
     requires=['django', 'django_picklefield', 'unidecode', 'django_annoying'],
-    classifiers=["License :: OSI Approved :: BSD License",
+    classifiers=["License :: OSI Approved :: MIT License",
                  "Framework :: Django",
                  "Development Status :: 4 - Beta",
                  "Programming Language :: Python :: 3"
