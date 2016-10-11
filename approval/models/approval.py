@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from picklefield.fields import PickledObjectField
-
 from scoop.core.util.data.typeutil import make_iterable
 
 
@@ -238,7 +237,7 @@ class ApprovalModel:
             class Meta:
                 abstract = True
                 db_table = table_name
-                app_label = 'content'
+                app_label = 'approval'
                 verbose_name = "{name} approval".format(name=name)
                 verbose_name_plural = "{name} approval".format(name=name_plural)
                 permissions = [['can_moderate_{0}'.format(table_model_name), "Can moderate {name}".format(name=name_plural)]]
@@ -256,9 +255,7 @@ class ApprovedModel(models.Model):
 
     # Getter
     def _get_authors(self):
-        """
-        Returns the authors of the object
-        """
+        """ Returns the authors of the object """
         if hasattr(self, 'request'):
             return [self.request.user]
         return self.approval._get_authors()
@@ -267,6 +264,8 @@ class ApprovedModel(models.Model):
     def _revert(self):
         """
         Revert the instance to its last saved state
+
+        (delete unsaved changes on model instance)
 
         :return: True if revert was possible, else False
         """
