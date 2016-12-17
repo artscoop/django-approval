@@ -1,9 +1,10 @@
 # coding: utf-8
-from approval.models.approval import ApprovedModel
 from django.contrib.admin.options import ModelAdmin
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from scoop.core.util.shortcuts import addattr
+
+from approval.models.approval import ApprovedModel
+from approval.util.shortcuts import addattr
 
 
 class ApprovalAdmin(ModelAdmin):

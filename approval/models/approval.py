@@ -8,7 +8,9 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from picklefield.fields import PickledObjectField
-from scoop.core.util.data.typeutil import make_iterable
+
+from approval.util.signals import pre_approval, post_approval
+from approval.util.types import make_iterable
 
 
 class ApprovalModel:
@@ -188,6 +190,7 @@ class ApprovalModel:
             # Actions
             def approve(self, user=None, save=False):
                 """ Approve pending object state """
+                pre_approval.send(base, instance=self.source, status=self.approved)
                 self.approval_date = timezone.now()
                 self.approved = True
                 self.moderator = user
@@ -196,15 +199,18 @@ class ApprovalModel:
                 self._update_source(save=True)
                 if save:
                     super().save()
+                post_approval.send(base, instance=self.source, status=self.approved)
 
             def deny(self, user=None, reason=None, save=False):
                 """ Deny pending edits on object """
+                pre_approval.send(base, instance=self.source, status=self.approved)
                 self.moderator = user
                 self.approved = False
                 self.draft = False
                 self.info = reason or pgettext_lazy('approval_entry', "Your edits have been refused.")
                 if save:
                     self.save()
+                post_approval.send(base, instance=self.source, status=self.approved)
 
             # Overridable
             def auto_process(self, authors=None):
