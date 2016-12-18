@@ -2,7 +2,15 @@
 
 
 def addattr(**kwargs):
-    """ Définir des attributs à une méthode ou fonction """
+    """
+    Add attributes to a function.
+
+    Eliminates the need to write things such as
+
+        def func():
+            pass
+        func.short_description = "This func does this"
+    """
 
     def decorator(func):
         for key in kwargs:

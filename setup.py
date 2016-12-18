@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 setup(
     name='django-approval',
-    version='0.9.20160611',
+    version='0.10.20161218',
     packages=find_packages('.'),
     include_package_data=True,
     url='',
