@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from picklefield.fields import PickledObjectField
@@ -63,6 +64,8 @@ class ApprovalModel:
                 """
                 Update fields of the source to reflect the state of the moderation queue
 
+                Or in other words, apply pending changes to the actual object.
+
                 :param default: change the source with the approval_default values only
                 :param save: must we change the source status permanently
                 """
@@ -93,6 +96,8 @@ class ApprovalModel:
             def _update_sandbox(self, slot=None, source=None):
                 """
                 Update fields of the sandbox to reflect the state of the source
+
+                Or in other words, create a pending status identical to the one of the actual object
                 """
                 slot = slot or "fields"
                 source = source or self.source
@@ -103,7 +108,11 @@ class ApprovalModel:
                 self.save()
 
             def submit_approval(self):
-                """ Set the status of the object to waiting for moderation """
+                """
+                Set the status of the object to waiting for moderation
+
+                In other words, the object will not be moderated unless it's pulled from draft.
+                """
                 if self.draft is True:
                     self.draft = False
                     self.save()
@@ -126,10 +135,11 @@ class ApprovalModel:
                     return None
                 return False
 
-            def _get_invalid_fields(self):
+            @cached_property
+            def _get_valid_fields(self):
                 """
-                Returns the names of the data fields that cannot be used
-                to update the source.
+                Returns the names of the data fields that can be used to update the source.
+
                 :returns: a list of field names
                 :rtype: list | None
                 """
@@ -140,6 +150,7 @@ class ApprovalModel:
             def _get_fields(self):
                 """
                 Returns the list of monitored field names
+
                 :returns: a list of strings
                 """
                 return self.approval_fields
@@ -165,7 +176,8 @@ class ApprovalModel:
 
             def _is_authorized(self, user):
                 """
-                Returns whether an user has approval bypass rights
+                Returns whether a user can bypass approval rights control
+
                 :param user: user or list of users, or even None
                 """
                 if user:
@@ -179,7 +191,7 @@ class ApprovalModel:
                 """
                 Approve or deny edits automatically.
 
-                :param author: author or list of authors or None
+                :param authors: author or list of authors or None
                 :param update: define if the process is an update
                 """
                 authorized = self._is_authorized(authors) or self._can_bypass_approval()
