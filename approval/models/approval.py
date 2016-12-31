@@ -26,7 +26,7 @@ class ApprovalModel:
     :type base: django.db.models.Model & ApprovedModel
     """
 
-    def __new__(cls, base, **kwargs):
+    def __new__(cls, base, **extra):
         """ Allows use of class call to return a class derived from Approval """
         table_name = '{0}_approval'.format(base._meta.db_table)
         table_app = base._meta.app_label
@@ -260,6 +260,7 @@ class ApprovalModel:
                 verbose_name_plural = "{name} approval".format(name=name_plural)
                 permissions = [['can_moderate_{0}'.format(table_model_name), "Can moderate {name}".format(name=name_plural)]]
 
+        # Try to make the base model an ApprovedModel automagically
         if ApprovedModel not in base.__bases__:
             base.__bases__ += (ApprovedModel,)
         if issubclass(base, ApprovedModel):
