@@ -33,7 +33,7 @@ def after_save(sender, instance, raw, created, **kwargs):
 
     For new objects, copy the status to the sandbox, and then
     set some fields in the original object to reflect approval defaults
-    (generally, it means setting content to invisible)
+    (generally, it means setting content to invisible or unpublished)
 
     :param sender: Generally, the class of the saved object
     :param instance: Instance of the saved object

@@ -50,7 +50,7 @@ class ApprovalModel:
 
             # Fields
             source = AutoOneToOneField(base, null=False, on_delete=models.CASCADE, related_name='approval')
-            sandbox = PickledObjectField(default={}, blank=False, verbose_name=_("Data"))
+            sandbox = PickledObjectField(default={}, blank=False, protocol=3, verbose_name=_("Data"))
             approved = models.NullBooleanField(default=None, choices=MODERATION, verbose_name=pgettext_lazy('approval_entry', "Moderated"))
             moderator = models.ForeignKey(settings.AUTH_USER_MODEL, default=None, blank=True, null=True,
                                           related_name=reverse_name, verbose_name=pgettext_lazy('approval_entry', "Moderated by"))

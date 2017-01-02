@@ -31,6 +31,7 @@ class ApprovalAdmin(ModelAdmin):
             approval.approve(user=request.user, save=True)
         self.message_user(request, _("Selected edits have been accepted."))
 
+    # Getter
     @addattr(short_description=_("Content"), allow_tags=True)
     def get_sandbox_data(self, obj):
         """ Return a human-readable version of the sandbox contents """
