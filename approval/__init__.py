@@ -14,7 +14,9 @@ class ApprovalConfig(AppConfig):
 
     def ready(self):
         """ Le registre des applications est prêt """
-        from approval import listeners
+        from django.conf import settings
+        if not getattr(settings, 'APPROVAL_DISABLE_SIGNALS', False):  # If you absolutely need disabling signals for a while
+            from approval import listeners
 
 # Charger la configuration ci-dessus par défaut
 default_app_config = 'approval.ApprovalConfig'
