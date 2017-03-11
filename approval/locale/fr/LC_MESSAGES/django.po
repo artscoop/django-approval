@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-28 06:14+0200\n"
+"POT-Creation-Date: 2017-01-15 23:32+0100\n"
 "PO-Revision-Date: 2015-11-19 04:57+0100\n"
 "Last-Translator: Steve Kossouho <steve.kossouho@gmail.com>\n"
 "Language-Team: français <>\n"
@@ -23,89 +23,89 @@ msgstr ""
 msgid "Approval"
 msgstr "Approbation"
 
-#: admin/approval.py:19
+#: admin/approval.py:20
 msgid "Deny selected approval requests"
 msgstr "Refuser les demandes de modération sélectionnées"
 
-#: admin/approval.py:24
+#: admin/approval.py:25
 msgid "Selected edits have been denied."
 msgstr "Les modification sélectionnées ont été refusées."
 
-#: admin/approval.py:26
+#: admin/approval.py:27
 msgid "Approve selected approval requests"
 msgstr "Accepter les demandes de modération sélectionnées"
 
-#: admin/approval.py:31
+#: admin/approval.py:32
 msgid "Selected edits have been accepted."
 msgstr "Les modification sélectionnées ont été acceptées."
 
-#: admin/approval.py:33
+#: admin/approval.py:35
 msgid "Content"
 msgstr "Contenu"
 
-#: models/approval.py:45
+#: models/approval.py:48
 msgid "Pending"
 msgstr "En attente"
 
-#: models/approval.py:45
+#: models/approval.py:48
 msgid "Refused"
 msgstr "Refusé"
 
-#: models/approval.py:45
+#: models/approval.py:48
 msgid "Approved"
 msgstr "Approuvé"
 
-#: models/approval.py:46
+#: models/approval.py:49
 msgid "Waiting for moderation"
 msgstr "En attente de modération"
 
-#: models/approval.py:46
+#: models/approval.py:49
 msgid "Draft"
 msgstr "Brouillon"
 
-#: models/approval.py:50
+#: models/approval.py:53
 msgid "Data"
 msgstr "Données"
 
-#: models/approval.py:51
+#: models/approval.py:54
 msgctxt "approval_entry"
 msgid "Moderated"
 msgstr "Modéré"
 
-#: models/approval.py:53
+#: models/approval.py:56
 msgctxt "approval_entry"
 msgid "Moderated by"
 msgstr "Modéré par"
 
-#: models/approval.py:54
+#: models/approval.py:57
 msgctxt "approval_entry"
 msgid "Moderated at"
 msgstr "Modéré le"
 
-#: models/approval.py:55
+#: models/approval.py:58
 msgid "Reason"
 msgstr "Raison"
 
-#: models/approval.py:56
+#: models/approval.py:59
 msgctxt "approval_entry"
 msgid "Draft"
 msgstr "Brouillon"
 
-#: models/approval.py:57
+#: models/approval.py:60
 msgctxt "approval_entry"
 msgid "Updated"
 msgstr "Mis à jour"
 
-#: models/approval.py:193
+#: models/approval.py:210
 msgctxt "approval_entry"
 msgid "Congratulations, your edits have been approved."
 msgstr "Félicitations, vos modifications ont été acceptées."
 
-#: models/approval.py:203
+#: models/approval.py:222
 msgctxt "approval_entry"
 msgid "Your edits have been refused."
 msgstr "Vos modifications ont été refusées."
 
-#: models/approval.py:243
+#: models/approval.py:269
 msgid "Your base model must inherit from approval.models.ApprovedModel."
 msgstr "Votre modèle de base doit hériter de approval.models.ApprovedModel."

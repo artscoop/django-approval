@@ -258,7 +258,7 @@ class ApprovalModel:
                 app_label = 'approval'
                 verbose_name = "{name} approval".format(name=name)
                 verbose_name_plural = "{name} approval".format(name=name_plural)
-                permissions = [['can_moderate_{0}'.format(table_model_name), "Can moderate {name}".format(name=name_plural)]]
+                permissions = [['moderate_{0}'.format(table_model_name), "Can moderate {name}".format(name=name_plural)]]
 
         # Try to make the base model an ApprovedModel automagically
         if ApprovedModel not in base.__bases__:
