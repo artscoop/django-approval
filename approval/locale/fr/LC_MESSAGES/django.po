@@ -1,25 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Steve Kossouho <steve.kossouho@gmail.com>, 2015.
+#
+# Steve Kossouho <artscoop93@gmail.com>, 2015-2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 0.36\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-15 23:32+0100\n"
-"PO-Revision-Date: 2015-11-19 04:57+0100\n"
-"Last-Translator: Steve Kossouho <steve.kossouho@gmail.com>\n"
-"Language-Team: français <>\n"
-"Language: \n"
+"POT-Creation-Date: 2019-07-17 19:00+0200\n"
+"PO-Revision-Date: 2019-07-17 19:02+0200\n"
+"Last-Translator: Steve Kossouho <artscoop93@gmail.com>\n"
+"Language-Team: French - France <artscoop93@gmail.com>\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 3.32.1\n"
 
-#: __init__.py:7
+#: __init__.py:5
 msgid "Approval"
 msgstr "Approbation"
 
@@ -43,69 +40,107 @@ msgstr "Les modification sélectionnées ont été acceptées."
 msgid "Content"
 msgstr "Contenu"
 
-#: models/approval.py:48
+#: models/approval.py:50
+#| msgid "Pending"
+msgctxt "approval.moderation"
 msgid "Pending"
 msgstr "En attente"
 
-#: models/approval.py:48
+#: models/approval.py:51
+#| msgid "Refused"
+msgctxt "approval.moderation"
 msgid "Refused"
 msgstr "Refusé"
 
-#: models/approval.py:48
+#: models/approval.py:52
+#| msgid "Approved"
+msgctxt "approval.moderation"
 msgid "Approved"
 msgstr "Approuvé"
 
-#: models/approval.py:49
+#: models/approval.py:55
+#| msgid "Waiting for moderation"
+msgctxt "approval.draft"
 msgid "Waiting for moderation"
 msgstr "En attente de modération"
 
-#: models/approval.py:49
+#: models/approval.py:56
+#| msgid "Draft"
+msgctxt "approval.draft"
 msgid "Draft"
 msgstr "Brouillon"
 
-#: models/approval.py:53
+#: models/approval.py:69
+#| msgid "Data"
+msgctxt "approval_entry"
 msgid "Data"
 msgstr "Données"
 
-#: models/approval.py:54
+#: models/approval.py:74
 msgctxt "approval_entry"
 msgid "Moderated"
 msgstr "Modéré"
 
-#: models/approval.py:56
+#: models/approval.py:80
 msgctxt "approval_entry"
 msgid "Moderated by"
 msgstr "Modéré par"
 
-#: models/approval.py:57
+#: models/approval.py:82
 msgctxt "approval_entry"
 msgid "Moderated at"
 msgstr "Modéré le"
 
-#: models/approval.py:58
+#: models/approval.py:83
+#| msgid "Reason"
+msgctxt "approval"
 msgid "Reason"
 msgstr "Raison"
 
-#: models/approval.py:59
+#: models/approval.py:84
 msgctxt "approval_entry"
 msgid "Draft"
 msgstr "Brouillon"
 
-#: models/approval.py:60
+#: models/approval.py:85
 msgctxt "approval_entry"
 msgid "Updated"
 msgstr "Mis à jour"
 
-#: models/approval.py:210
+#: models/approval.py:92
+#, python-brace-format
+#| msgid "approval"
+msgctxt "approval"
+msgid "{name} approval"
+msgstr "approbation de {name}"
+
+#: models/approval.py:93
+#, python-brace-format
+#| msgid "approval"
+msgctxt "approval"
+msgid "{name} approvals"
+msgstr "approbations de {name}"
+
+#: models/approval.py:271
 msgctxt "approval_entry"
 msgid "Congratulations, your edits have been approved."
 msgstr "Félicitations, vos modifications ont été acceptées."
 
-#: models/approval.py:222
+#: models/approval.py:283
 msgctxt "approval_entry"
 msgid "Your edits have been refused."
 msgstr "Vos modifications ont été refusées."
 
-#: models/approval.py:269
-msgid "Your base model must inherit from approval.models.ApprovedModel."
-msgstr "Votre modèle de base doit hériter de approval.models.ApprovedModel."
+#~ msgid "approval.moderation"
+#~ msgstr "approval.moderation"
+
+#~| msgid "Approval"
+#~ msgid "approval.draft"
+#~ msgstr "approval.draft"
+
+#~| msgid "Approval"
+#~ msgid "approval_entry"
+#~ msgstr "approval_entry"
+
+#~ msgid "Your base model must inherit from approval.models.ApprovedModel."
+#~ msgstr "Votre modèle de base doit hériter de approval.models.ApprovedModel."
