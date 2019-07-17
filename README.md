@@ -29,9 +29,9 @@ class Book(ApprovedModel):
     def auto_process_approval(self, authors: Iterable):
         """Optional method to auto-approve or auto-deny content."""
         if self.author.username == "forbidden_author":
-            self.deny()
+            self.approval.deny()
         elif len(authors) == 1 and authors[0].username == "allowed_submitter":
-            self.approve(user=authors[0], save=True)
+            self.approval.approve(user=authors[0], save=True)
         
 
 
