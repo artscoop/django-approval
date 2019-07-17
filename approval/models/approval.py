@@ -204,8 +204,9 @@ class ApprovalModel:
                 """
                 Returns the names of the data fields that can be used to update the source.
 
-                :returns: a list of field names
-                :rtype: list | None
+                Returns:
+                    A list of field names that are relevant to the source (useful
+                    when the original model changed after a migration).
 
                 """
                 fields = self._get_fields()
@@ -213,11 +214,7 @@ class ApprovalModel:
                 return [field for field in fields if field in source_fields] or None
 
             def _get_fields(self) -> List[str]:
-                """
-                Returns the list of monitored field names
-
-                :returns: a list of strings
-                """
+                """Returns the list of monitored field names."""
                 return self.approval_fields
 
             def _get_fields_data(self) -> Dict[str, object]:
@@ -235,7 +232,7 @@ class ApprovalModel:
                 Returns the difference between the approval data and the source.
 
                 Returns:
-                    a list of monitored field names that are different in the source
+                    A list of monitored field names that are different in the source.
 
                 """
                 data = self._get_fields_data()
@@ -246,7 +243,8 @@ class ApprovalModel:
                 """
                 Returns whether a user can bypass approval rights control
 
-                :param user: user or list of users, or even None
+                Args:
+                    user: The user to check against.
 
                 """
                 if user:
@@ -286,8 +284,10 @@ class ApprovalModel:
                 self.approved = True
                 self.moderator = user
                 self.draft = False
-                self.info = pgettext_lazy('approval_entry',
-                                          "Congratulations, your edits have been approved.")
+                self.info = pgettext_lazy(
+                    'approval_entry',
+                    "Congratulations, your edits have been approved."
+                )
                 self._update_source(save=True)
                 if save:
                     super().save()
@@ -321,7 +321,8 @@ class ApprovalModel:
                 """
                 Returns the authors of the source instance.
 
-                This method must be overriden.
+                Warnings:
+                    This method *must* be overriden.
 
                 """
                 raise NotImplemented("You must define _get_authors() in your model.")
@@ -333,7 +334,11 @@ class ApprovalModel:
             return Approval
         else:
             raise ImproperlyConfigured(
-                pgettext_lazy("Your base model must inherit from approval.models.ApprovedModel."))
+                pgettext_lazy(
+                    "approval",
+                    "Your base model must inherit from approval.models.ApprovedModel."
+                )
+            )
 
 
 class ApprovedModel(models.Model):
