@@ -78,6 +78,27 @@ approval. You have to define `APPROVAL_DISABLE_SIGNALS`:
 APPROVAL_DISABLE_SIGNALS = True
 ```
 
+### Forms
+
+When using Django forms to edit an instance with approval data, by default, you would get
+a form initialized with the information of the actual instance. This is normally correct, but
+with approval monitoring, your changes are not saved into the instance, but in a sandbox.
+That means that everytime you would want to edit your instance, you would always see the same data
+in the monitored fields.
+
+In order to be able too see your pending changes everytime you edit your instance, you have
+to add a mixin to your form as follows:
+```python
+from django import forms
+from approval.forms import ApprovableFormMixin
+
+
+class BookForm(forms.ModelForm, ApprovableFormMixin):
+    class Meta:
+        model = Book
+
+```
+
 ### Considerations for use
 
 **Warning** : Monitored models should not be changed in a pre_save signal.
