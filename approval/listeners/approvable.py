@@ -23,7 +23,7 @@ def before_save(sender, instance, **kwargs):
             user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
             instance._revert()
-            instance.approval._auto_process(authors=user, update=True)
+            instance.approval._auto_process(authors=[user], update=True)
 
 
 @receiver(post_save)
@@ -45,4 +45,4 @@ def after_save(sender, instance, raw, created, **kwargs):
             user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
             instance.approval._update_source(default=True, save=True)
-            instance.approval._auto_process(authors=user, update=False)
+            instance.approval._auto_process(authors=[user], update=False)

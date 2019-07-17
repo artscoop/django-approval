@@ -26,24 +26,23 @@ class ApprovalAdmin(ModelAdmin):
 
     @addattr(short_description=_("Approve selected approval requests"))
     def do_approve(self, request, queryset):
-        """ Accept selected approval requests """
+        """Accept selected approval requests."""
         for approval in queryset:
             approval.approve(user=request.user, save=True)
         self.message_user(request, _("Selected edits have been accepted."))
 
     # Getter
     @addattr(short_description=_("Content"), allow_tags=True)
-    def get_sandbox_data(self, obj):
-        """ Return a human-readable version of the sandbox contents """
+    def get_sandbox_data(self, obj: ApprovalModel) -> str:
+        """Returns a human-readable version of the sandbox contents."""
         output = obj.sandbox['fields']
         return render_to_string('approval/display/sandbox-data.html', {'fields': output})
 
 
 class ApprovableAdmin(ModelAdmin):
-    """ ModelAdmin mixin for approval-controlled objects """
+    """ModelAdmin mixin for approval-controlled objects."""
 
-    # Overrides
-    def get_object(self, request, object_id, from_field=None):
+    def get_object(self, request, object_id, from_field: str = None) -> ApprovedModel:
         """ Return the desired object, augmented with a request attribute """
         obj = super().get_object(request, object_id)
         if isinstance(obj, ApprovedModel):
