@@ -1,6 +1,7 @@
 # coding: utf-8
 """Approval models."""
 from __future__ import annotations
+
 from typing import List, Optional, Dict, Iterable
 
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.utils.translation import pgettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
 from approval.util.signals import pre_approval, post_approval
@@ -30,7 +30,7 @@ class ApprovalModel:
 
     def __new__(cls, base: [ApprovedModel, models.Model], **extra):
         """ Allows use of class call to return a class derived from Approval """
-        table_name = '{0}_approval'.format(base._meta.db_table)
+        table_name = extra.pop("db_table", '{0}_approval'.format(base._meta.db_table))
         table_app = base._meta.app_label
         table_model_name = base._meta.model_name
         name = base._meta.verbose_name
@@ -48,13 +48,13 @@ class ApprovalModel:
 
             # Constants
             MODERATION = (
-                (None, _("approval.moderation", "Pending")),
-                (False, _("approval.moderation", "Refused")),
-                (True, _("approval.moderation", "Approved"))
+                (None, pgettext_lazy("approval.moderation", "Pending")),
+                (False, pgettext_lazy("approval.moderation", "Refused")),
+                (True, pgettext_lazy("approval.moderation", "Approved"))
             )
             DRAFT = (
-                (False, _("approval.draft", "Waiting for moderation")),
-                (True, _("approval.draft", "Draft"))
+                (False, pgettext_lazy("approval.draft", "Waiting for moderation")),
+                (True, pgettext_lazy("approval.draft", "Draft"))
             )
 
             # Fields
@@ -67,31 +67,33 @@ class ApprovalModel:
             sandbox = JSONField(  # type: dict
                 default=dict, blank=False,
                 encoder=DjangoJSONEncoder,
-                verbose_name=_("approval_entry", "Data")
+                verbose_name=pgettext_lazy("approval_entry", "Data")
             )
             approved = models.NullBooleanField(
                 default=None,
                 choices=MODERATION,
-                verbose_name=_("approval_entry", "Moderated")
+                verbose_name=pgettext_lazy("approval_entry", "Moderated")
             )
             moderator = models.ForeignKey(
                 settings.AUTH_USER_MODEL,
                 default=None, blank=True, null=True,
                 related_name=reverse_name,
-                verbose_name=_("approval_entry", "Moderated by")
+                verbose_name=pgettext_lazy("approval_entry", "Moderated by")
             )
-            approval_date = models.DateTimeField(null=True, verbose_name=_("approval_entry", "Moderated at"))
-            info = models.TextField(blank=True, verbose_name=_("approval", "Reason"))
-            draft = models.BooleanField(default=True, choices=DRAFT, verbose_name=_("approval_entry", "Draft"))
-            updated = models.DateTimeField(auto_now=True, verbose_name=_("approval_entry", "Updated"))
+            approval_date = models.DateTimeField(null=True,
+                                                 verbose_name=pgettext_lazy("approval_entry", "Moderated at"))
+            info = models.TextField(blank=True, verbose_name=pgettext_lazy("approval", "Reason"))
+            draft = models.BooleanField(default=True, choices=DRAFT,
+                                        verbose_name=pgettext_lazy("approval_entry", "Draft"))
+            updated = models.DateTimeField(auto_now=True, verbose_name=pgettext_lazy("approval_entry", "Updated"))
 
             # Metadata
             class Meta:
                 abstract = True
                 db_table = table_name
                 app_label = 'approval'
-                verbose_name = _("approval", "{name} approval").format(name=name)
-                verbose_name_plural = _("approval", "{name} approvals").format(name=name_plural)
+                verbose_name = pgettext_lazy("approval", "{name} approval").format(name=name)
+                verbose_name_plural = pgettext_lazy("approval", "{name} approvals").format(name=name_plural)
                 permissions = [[f"moderate_{table_model_name}", f"Can moderate {name_plural}"]]
 
             def save(self, **kwargs):
@@ -254,7 +256,8 @@ class ApprovalModel:
                         Is set to `False` when the object is new, `True` otherwise.
 
                 """
-                authorized: bool = any(self._can_user_bypass_approval(authors) for author in authors) or not self._needs_approval()
+                authorized: bool = any(
+                    self._can_user_bypass_approval(authors) for author in authors) or not self._needs_approval()
                 if authorized or (self.auto_approve_new and not update):
                     self.approve(user=authors[0], save=True)
                 if self.auto_approve_staff and any(filter(lambda u: u.is_staff, authors)):
@@ -281,7 +284,7 @@ class ApprovalModel:
                 self.moderator = user
                 self.approved = False
                 self.draft = False
-                self.info = reason or _('approval_entry', "Your edits have been refused.")
+                self.info = reason or pgettext_lazy('approval_entry', "Your edits have been refused.")
                 if save:
                     self.save()
                 post_approval.send(base, instance=self.source, status=self.approved)
@@ -313,7 +316,8 @@ class ApprovalModel:
         if issubclass(base, ApprovedModel):
             return Approval
         else:
-            raise ImproperlyConfigured(_("Your base model must inherit from approval.models.ApprovedModel."))
+            raise ImproperlyConfigured(
+                pgettext_lazy("Your base model must inherit from approval.models.ApprovedModel."))
 
 
 class ApprovedModel(models.Model):

@@ -8,7 +8,7 @@ from approval.util.shortcuts import addattr
 
 
 class ApprovalAdmin(ModelAdmin):
-    """ Moderation of approval models """
+    """Moderation of approval sandboxes."""
 
     list_select_related = True
     list_display = ['id', 'source', 'moderator', 'approved', 'approval_date', 'draft', 'updated', 'get_sandbox_data']
@@ -19,7 +19,7 @@ class ApprovalAdmin(ModelAdmin):
     # Actions
     @addattr(short_description=_("Deny selected approval requests"))
     def do_deny(self, request, queryset):
-        """ Refuse selected approval requests """
+        """Refuse selected approval requests."""
         for approval in queryset:
             approval.deny(user=request.user, save=True)
         self.message_user(request, _("Selected edits have been denied."))
@@ -43,7 +43,7 @@ class ApprovableAdmin(ModelAdmin):
     """ModelAdmin mixin for approval-controlled objects."""
 
     def get_object(self, request, object_id, from_field: str = None) -> ApprovedModel:
-        """ Return the desired object, augmented with a request attribute """
+        """Return the desired object, augmented with a request attribute."""
         obj = super().get_object(request, object_id)
         if isinstance(obj, ApprovedModel):
             obj.approval._update_source(default=False, save=False)

@@ -1,2 +1,2 @@
 # coding: utf-8
-from .approvable import ApprovableForm
+from .approvable import ApprovableFormMixin
