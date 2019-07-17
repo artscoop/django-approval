@@ -172,7 +172,7 @@ class ApprovalModel:
                 """
                 return self.draft
 
-            def _can_bypass_approval(self) -> bool:
+            def _needs_approval(self) -> bool:
                 """
                 Returns whether the status of the object really needs an approval.
 
@@ -227,7 +227,7 @@ class ApprovalModel:
                 source_data = {field: getattr(self.source, field) for field in self._get_fields()}
                 return [key for key in data.keys() if data[key] != source_data[key]] or None
 
-            def _is_authorized(self, user) -> bool:
+            def _can_user_bypass_approval(self, user) -> bool:
                 """
                 Returns whether a user can bypass approval rights control
 
@@ -239,7 +239,7 @@ class ApprovalModel:
                         return True
                 return False
 
-            def _auto_process(self, authors: Iterable = None, update: bool = False):
+            def _auto_process_approval(self, authors: Iterable = None, update: bool = False):
                 """
                 Approves or denies edits automatically.
 
@@ -247,16 +247,19 @@ class ApprovalModel:
                 "auto_approve_..." fields.
 
                 Args:
+                    authors: The list of users responsible for the change. If the instance
+                        contains a `request` attribute, the connected user is considered the
+                        author of the change.
                     update: Is used to differentiate between new objects and updated ones.
                         Is set to `False` when the object is new, `True` otherwise.
 
                 """
-                authorized: bool = any(self._is_authorized(authors) for author in authors) or self._can_bypass_approval()
+                authorized: bool = any(self._can_user_bypass_approval(authors) for author in authors) or not self._needs_approval()
                 if authorized or (self.auto_approve_new and not update):
                     self.approve(user=authors[0], save=True)
                 if self.auto_approve_staff and any(filter(lambda u: u.is_staff, authors)):
                     self.approve(user=authors[0], save=True)
-                self.auto_process(authors=authors)
+                self.auto_process_approval(authors=authors)
 
             # Actions
             def approve(self, user=None, save: bool = False) -> None:
@@ -284,7 +287,7 @@ class ApprovalModel:
                 post_approval.send(base, instance=self.source, status=self.approved)
 
             # Overridable
-            def auto_process(self, authors: Iterable = None) -> None:
+            def auto_process_approval(self, authors: Iterable = None) -> None:
                 """
                 User-defined auto-processing, the developer should override this.
 

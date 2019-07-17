@@ -20,10 +20,10 @@ def before_save(sender, instance, **kwargs):
     """
     if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
         if instance.pk is not None:  # Sandbox updated instances only
-            user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
+            users = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
             instance._revert()
-            instance.approval._auto_process(authors=[user], update=True)
+            instance.approval._auto_process_approval(authors=users, update=True)
 
 
 @receiver(post_save)
@@ -42,7 +42,7 @@ def after_save(sender, instance, raw, created, **kwargs):
     """
     if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
         if created:
-            user = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
+            users = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
             instance.approval._update_sandbox()
             instance.approval._update_source(default=True, save=True)
-            instance.approval._auto_process(authors=[user], update=False)
+            instance.approval._auto_process_approval(authors=[users], update=False)
