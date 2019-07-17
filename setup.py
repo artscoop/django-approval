@@ -6,18 +6,22 @@ from setuptools import find_packages
 
 setup(
     name='django-approval',
-    version='0.10.20161218',
+    version='0.36',
     packages=find_packages('.'),
     include_package_data=True,
     url='',
-    author='S Kossouho',
+    author='Steve Kossouho',
     author_email='artscoop93@gmail.com',
-    description='Approval mechanisms for model instances in Django 1.8+',
-    requires=['django', 'django_picklefield', 'unidecode', 'django_annoying'],
-    classifiers=["License :: OSI Approved :: MIT License",
-                 "Framework :: Django",
-                 "Development Status :: 4 - Beta",
-                 "Programming Language :: Python :: 3"
-                 ]
-
+    description='Approval mechanisms for model instances in Django',
+    requires=[
+        'django>=1.11',
+        'unidecode'
+    ],
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Framework :: Django",
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+    ]
 )
