@@ -3,7 +3,8 @@ Easy moderation of changes made to models. Django 1.11+ and Python 3.5+
 
 ## Installation
 1. Download the application and run `python setup.py`
-2. or install via pip using `pip install django-approval`
+1. or download the application and run `pip install -e <folder with setup.py>`
+1. or install via pip using `pip install django-approval`
 
 ## How to use
 ### Register an approval model
@@ -52,7 +53,7 @@ class BookApproval(ApprovalModel(Book)):
 An `approval` attribute will be accessible on every `Book` instance,
 allowing to check field values for the underlying `Approval` instance.
 `approval_fields` is the list of model fields that trigger an approval process
-when changed.
+when changed. **Foreign keys and Many-to-Many relations are not supported**.
 `approval_default` is a list of values to apply to a new content while it's
 waiting for approval.
 
