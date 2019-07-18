@@ -18,7 +18,7 @@ from approval.util.signals import post_approval, pre_approval
 
 class ApprovalModel:
     """
-    Define and record a moderation model from a base model.
+    Moderation sandbox mixin.
 
     How to use:
     - Have your monitored model extend ApprovedModel
@@ -29,16 +29,27 @@ class ApprovalModel:
     """
 
     def __new__(cls, base: [ApprovedModel, models.Model], **extra):
-        """ Allows use of class call to return a class derived from Approval """
-        table_name = extra.pop("db_table", '{0}_approval'.format(base._meta.db_table))
+        """Allows use of class call to return a class derived from Approval."""
+        table_name = extra.pop("db_table", "{0}_approval".format(base._meta.db_table))
         table_app = base._meta.app_label
         table_model_name = base._meta.model_name
         name = base._meta.verbose_name
         name_plural = base._meta.verbose_name_plural
-        reverse_name = 'moderated_{0}_approval'.format(base._meta.model_name)
+        reverse_name = "moderated_{0}_approval".format(base._meta.model_name)
 
         class Approval(models.Model):
-            """Parametrized model."""
+            """
+            Parametrized model.
+
+            Attributes:
+                approval_fields: the list of model fields on the source that should
+                    trigger the approval process.
+                approval_default: when an object is created and immediately needs
+                    approval, define the default values for the source. For example,
+                    for a blog entry, you can set the default `published` attribute
+                    to `False`.
+
+            """
 
             # Configuration
             approval_fields: List[str] = []
@@ -50,62 +61,65 @@ class ApprovalModel:
             MODERATION = (
                 (None, pgettext_lazy("approval.moderation", "Pending")),
                 (False, pgettext_lazy("approval.moderation", "Refused")),
-                (True, pgettext_lazy("approval.moderation", "Approved"))
+                (True, pgettext_lazy("approval.moderation", "Approved")),
             )
             DRAFT = (
                 (False, pgettext_lazy("approval.draft", "Waiting for moderation")),
-                (True, pgettext_lazy("approval.draft", "Draft"))
+                (True, pgettext_lazy("approval.draft", "Draft")),
             )
 
             # Fields
             source = models.OneToOneField(  # type: models.Model
-                base,
-                null=False,
-                on_delete=models.CASCADE,
-                related_name="approval"
+                base, null=False, on_delete=models.CASCADE, related_name="approval"
             )
             sandbox = JSONField(  # type: dict
-                default=dict, blank=False,
+                default=dict,
+                blank=False,
                 encoder=DjangoJSONEncoder,
-                verbose_name=pgettext_lazy("approval_entry", "Data")
+                verbose_name=pgettext_lazy("approval_entry", "Data"),
             )
             approved = models.NullBooleanField(
                 default=None,
                 choices=MODERATION,
-                verbose_name=pgettext_lazy("approval_entry", "Moderated")
+                verbose_name=pgettext_lazy("approval_entry", "Moderated"),
             )
             moderator = models.ForeignKey(
                 settings.AUTH_USER_MODEL,
-                default=None, blank=True, null=True,
+                default=None,
+                blank=True,
+                null=True,
                 related_name=reverse_name,
-                verbose_name=pgettext_lazy("approval_entry", "Moderated by")
+                verbose_name=pgettext_lazy("approval_entry", "Moderated by"),
             )
             approval_date = models.DateTimeField(
-                null=True,
-                verbose_name=pgettext_lazy("approval_entry", "Moderated at")
+                null=True, verbose_name=pgettext_lazy("approval_entry", "Moderated at")
             )
             info = models.TextField(
-                blank=True,
-                verbose_name=pgettext_lazy("approval", "Reason")
+                blank=True, verbose_name=pgettext_lazy("approval", "Reason")
             )
             draft = models.BooleanField(
-                default=True, choices=DRAFT,
-                verbose_name=pgettext_lazy("approval_entry", "Draft")
+                default=True,
+                choices=DRAFT,
+                verbose_name=pgettext_lazy("approval_entry", "Draft"),
             )
             updated = models.DateTimeField(
-                auto_now=True,
-                verbose_name=pgettext_lazy("approval_entry", "Updated")
+                auto_now=True, verbose_name=pgettext_lazy("approval_entry", "Updated")
             )
 
             # Metadata
             class Meta:
                 abstract = True
                 db_table = table_name
-                app_label = 'approval'
-                verbose_name = pgettext_lazy("approval", "{name} approval").format(name=name)
-                verbose_name_plural = pgettext_lazy("approval", "{name} approvals").format(
-                    name=name_plural)
-                permissions = [[f"moderate_{table_model_name}", f"Can moderate {name_plural}"]]
+                app_label = "approval"
+                verbose_name = pgettext_lazy("approval", "{name} approval").format(
+                    name=name
+                )
+                verbose_name_plural = pgettext_lazy(
+                    "approval", "{name} approvals"
+                ).format(name=name_plural)
+                permissions = [
+                    [f"moderate_{table_model_name}", f"Can moderate {name_plural}"]
+                ]
 
             def save(self, **kwargs):
                 return super().save(**kwargs)
@@ -130,7 +144,7 @@ class ApprovalModel:
                 if default is False:
                     for field in self._get_fields_data():
                         original[field] = getattr(self.source, field)
-                        setattr(self.source, field, self.sandbox['fields'][field])
+                        setattr(self.source, field, self.sandbox["fields"][field])
                 else:
                     for field in self.approval_default.keys():
                         setattr(self.source, field, self.approval_default[field])
@@ -151,7 +165,9 @@ class ApprovalModel:
                         self.source.save()
                     return True
 
-            def _update_sandbox(self, slot: str = None, source: ApprovedModel = None) -> None:
+            def _update_sandbox(
+                self, slot: str = None, source: ApprovedModel = None
+            ) -> None:
                 """
                 Updates fields of the sandbox to reflect the state of the source.
 
@@ -162,7 +178,9 @@ class ApprovalModel:
                 slot = slot or "fields"
                 source = source or self.source
                 fields = self._get_fields()
-                values = {key: getattr(source, key) for key in fields if hasattr(source, key)}
+                values = {
+                    key: getattr(source, key) for key in fields if hasattr(source, key)
+                }
                 self.sandbox[slot] = values
                 self.approved = None
                 self.save()
@@ -225,7 +243,7 @@ class ApprovalModel:
                     A dictionary with field names as keys and their sandbox value as values.
                     
                 """
-                return self.sandbox.get('fields', {})
+                return self.sandbox.get("fields", {})
 
             def _get_diff(self) -> Optional[List[str]]:
                 """
@@ -236,8 +254,12 @@ class ApprovalModel:
 
                 """
                 data = self._get_fields_data()
-                source_data = {field: getattr(self.source, field) for field in self._get_fields()}
-                return [key for key in data.keys() if data[key] != source_data[key]] or None
+                source_data = {
+                    field: getattr(self.source, field) for field in self._get_fields()
+                }
+                return [
+                    key for key in data.keys() if data[key] != source_data[key]
+                ] or None
 
             def _can_user_bypass_approval(self, user) -> bool:
                 """
@@ -248,11 +270,15 @@ class ApprovalModel:
 
                 """
                 if user:
-                    if user.has_perm('{0}.can_moderate_{1}'.format(table_app, table_model_name)):
+                    if user.has_perm(
+                        "{0}.can_moderate_{1}".format(table_app, table_model_name)
+                    ):
                         return True
                 return False
 
-            def _auto_process_approval(self, authors: Iterable = None, update: bool = False):
+            def _auto_process_approval(
+                self, authors: Iterable = None, update: bool = False
+            ):
                 """
                 Approves or denies edits automatically.
 
@@ -268,11 +294,13 @@ class ApprovalModel:
 
                 """
                 authorized: bool = any(
-                    self._can_user_bypass_approval(authors) for author in
-                    authors) or not self._needs_approval()
+                    self._can_user_bypass_approval(authors) for author in authors
+                ) or not self._needs_approval()
                 if authorized or (self.auto_approve_new and not update):
                     self.approve(user=authors[0], save=True)
-                if self.auto_approve_staff and any(filter(lambda u: u.is_staff, authors)):
+                if self.auto_approve_staff and any(
+                    filter(lambda u: u.is_staff, authors)
+                ):
                     self.approve(user=authors[0], save=True)
                 self.auto_process_approval(authors=authors)
 
@@ -285,8 +313,7 @@ class ApprovalModel:
                 self.moderator = user
                 self.draft = False
                 self.info = pgettext_lazy(
-                    'approval_entry',
-                    "Congratulations, your edits have been approved."
+                    "approval_entry", "Congratulations, your edits have been approved."
                 )
                 self._update_source(save=True)
                 if save:
@@ -299,8 +326,9 @@ class ApprovalModel:
                 self.moderator = user
                 self.approved = False
                 self.draft = False
-                self.info = reason or pgettext_lazy('approval_entry',
-                                                    "Your edits have been refused.")
+                self.info = reason or pgettext_lazy(
+                    "approval_entry", "Your edits have been refused."
+                )
                 if save:
                     self.save()
                 post_approval.send(base, instance=self.source, status=self.approved)
@@ -336,7 +364,7 @@ class ApprovalModel:
             raise ImproperlyConfigured(
                 pgettext_lazy(
                     "approval",
-                    "Your base model must inherit from approval.models.ApprovedModel."
+                    "Your base model must inherit from approval.models.ApprovedModel.",
                 )
             )
 
@@ -347,7 +375,7 @@ class ApprovedModel(models.Model):
     # Getter
     def _get_authors(self) -> Iterable:
         """Returns the authors of the object."""
-        if hasattr(self, 'request'):
+        if hasattr(self, "request"):
             return [self.request.user]
         return self.approval._get_authors()
 

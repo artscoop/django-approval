@@ -3,7 +3,7 @@
 from approval.models import ApprovedModel
 
 
-class ApprovableFormMixin():
+class ApprovableFormMixin:
     """ModelForm mixin for monitored models."""
 
     def __init__(self, *args, **kwargs):
@@ -13,7 +13,7 @@ class ApprovableFormMixin():
         The form is initialized with the instance data fetched from the sandbox.
 
         """
-        instance = kwargs.get('instance', None)
+        instance = kwargs.get("instance", None)
         if instance and isinstance(instance, ApprovedModel):
             instance.approval._update_source()
         super().__init__(*args, **kwargs)

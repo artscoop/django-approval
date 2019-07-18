@@ -18,9 +18,15 @@ def before_save(sender, instance, **kwargs):
     :param kwargs: Extra arguments (ignored)
     :type instance: django.db.models.Model | approval.models.ApprovedModel
     """
-    if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
+    if isinstance(instance, ApprovedModel) and not getattr(
+        instance, "_ignore_approval", False
+    ):
         if instance.pk is not None:  # Sandbox updated instances only
-            users = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
+            users = (
+                [instance.request.user]
+                if hasattr(instance, "request")
+                else instance._get_authors()
+            )
             instance.approval._update_sandbox()
             instance._revert()
             instance.approval._auto_process_approval(authors=users, update=True)
@@ -40,9 +46,15 @@ def after_save(sender, instance, raw, created, **kwargs):
     :param raw: --
     :param created: Is the instance new in the database ?
     """
-    if isinstance(instance, ApprovedModel) and not getattr(instance, '_ignore_approval', False):
+    if isinstance(instance, ApprovedModel) and not getattr(
+        instance, "_ignore_approval", False
+    ):
         if created:
-            users = [instance.request.user] if hasattr(instance, 'request') else instance._get_authors()
+            users = (
+                [instance.request.user]
+                if hasattr(instance, "request")
+                else instance._get_authors()
+            )
             instance.approval._update_sandbox()
             instance.approval._update_source(default=True, save=True)
             instance.approval._auto_process_approval(authors=[users], update=False)

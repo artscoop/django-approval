@@ -11,10 +11,19 @@ class ApprovalAdmin(ModelAdmin):
     """Moderation of approval sandboxes."""
 
     list_select_related = True
-    list_display = ['id', 'source', 'moderator', 'approved', 'approval_date', 'draft', 'updated', 'get_sandbox_data']
-    list_display_links = ['id']
-    list_filter = ['approved', 'draft']
-    actions = ['do_deny', 'do_approve']
+    list_display = [
+        "id",
+        "source",
+        "moderator",
+        "approved",
+        "approval_date",
+        "draft",
+        "updated",
+        "get_sandbox_data",
+    ]
+    list_display_links = ["id"]
+    list_filter = ["approved", "draft"]
+    actions = ["do_deny", "do_approve"]
 
     # Actions
     @addattr(short_description=_("Deny selected approval requests"))
@@ -35,8 +44,10 @@ class ApprovalAdmin(ModelAdmin):
     @addattr(short_description=_("Content"), allow_tags=True)
     def get_sandbox_data(self, obj: ApprovalModel) -> str:
         """Returns a human-readable version of the sandbox contents."""
-        output = obj.sandbox['fields']
-        return render_to_string('approval/display/sandbox-data.html', {'fields': output})
+        output = obj.sandbox["fields"]
+        return render_to_string(
+            "approval/display/sandbox-data.html", {"fields": output}
+        )
 
 
 class ApprovableAdmin(ModelAdmin):

@@ -5,11 +5,10 @@ def addattr(**kwargs):
     """
     Add attributes to a function.
 
-    Eliminates the need to write things such as
+    Notes:
+        Eliminates the need to write things such as
+        `func.short_description = "This func does this"`
 
-        def func():
-            pass
-        func.short_description = "This func does this"
     """
 
     def decorator(func):

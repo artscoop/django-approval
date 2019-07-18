@@ -1,1 +1,1 @@
-__author__ = 'knt'
+# coding: utf-8
