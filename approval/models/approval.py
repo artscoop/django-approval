@@ -70,7 +70,10 @@ class ApprovalModel:
 
             # Fields
             source = models.OneToOneField(  # type: models.Model
-                base, null=False, on_delete=models.CASCADE, related_name="approval"
+                base,
+                null=False,
+                on_delete=models.CASCADE,
+                related_name="approval"
             )
             sandbox = JSONField(  # type: dict
                 default=dict,
@@ -90,6 +93,7 @@ class ApprovalModel:
                 null=True,
                 related_name=reverse_name,
                 verbose_name=pgettext_lazy("approval_entry", "Moderated by"),
+                on_delete=models.CASCADE
             )
             approval_date = models.DateTimeField(
                 null=True, verbose_name=pgettext_lazy("approval_entry", "Moderated at")
