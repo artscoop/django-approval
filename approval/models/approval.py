@@ -282,7 +282,7 @@ class ApprovalModel:
 
             def _auto_process_approval(
                 self, authors: Iterable = None, update: bool = False
-            ):
+            ) -> None:
                 """
                 Approves or denies edits automatically.
 
@@ -324,7 +324,7 @@ class ApprovalModel:
                     super().save()
                 post_approval.send(base, instance=self.source, status=self.approved)
 
-            def deny(self, user=None, reason: str = None, save: bool = False):
+            def deny(self, user=None, reason: str = None, save: bool = False) -> None:
                 """Deny pending edits on object."""
                 pre_approval.send(base, instance=self.source, status=self.approved)
                 self.moderator = user

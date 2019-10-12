@@ -14,8 +14,8 @@ def make_iterable(
         If value is None, the function returns an empty iterable.
 
     """
-    if type(value) is output_type:
+    if isinstance(value, output_type):
         return value
-    if isinstance(value, (list, set, tuple, QuerySet)) and type(value) != output_type:
+    elif isinstance(value, (list, set, tuple, QuerySet)):
         return output_type(value)
     return output_type([value]) if value is not None else output_type()
