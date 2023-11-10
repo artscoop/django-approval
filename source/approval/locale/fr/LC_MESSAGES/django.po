@@ -1,0 +1,243 @@
+#
+# Steve Kossouho <artscoop93@gmail.com>, 2015-2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.36\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-19 22:54+0200\n"
+"PO-Revision-Date: 2023-08-18 05:11+0200\n"
+"Last-Translator: Steve Kossouho <artscoop93@gmail.com>\n"
+"Language-Team: French - France <artscoop93@gmail.com>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.3.2\n"
+
+#: admin/monitored.py:40
+msgctxt "approval"
+msgid "This form is showing changes currently pending."
+msgstr ""
+"Ce formulaire affiche des modifications toujours en attente de validation."
+
+#: admin/monitored.py:47
+msgctxt "approval"
+msgid "status"
+msgstr "statut"
+
+#: admin/sandbox.py:27
+msgid "Deny selected approval requests"
+msgstr "Refuser les demandes de modération sélectionnées"
+
+#: admin/sandbox.py:32
+msgid "Selected edits have been denied."
+msgstr "Les modification sélectionnées ont été refusées."
+
+#: admin/sandbox.py:34
+msgid "Approve selected approval requests"
+msgstr "Accepter les demandes de modération sélectionnées"
+
+#: admin/sandbox.py:39
+msgid "Selected edits have been accepted."
+msgstr "Les modification sélectionnées ont été acceptées."
+
+#: admin/sandbox.py:42
+msgid "Content"
+msgstr "Contenu"
+
+#: apps.py:9
+msgctxt "approval"
+msgid "approval"
+msgstr "modération"
+
+#: forms/monitored.py:23
+#, python-brace-format
+msgctxt "approval"
+msgid "{self.__class__.__name__} fetched approval data."
+msgstr "{self.__class__.__name__} a récupéré des données de modération."
+
+#: listeners/monitored.py:29
+#, python-brace-format
+msgctxt "approval"
+msgid "Pre-save signal handled on updated {cls}"
+msgstr "Signal pre-save traité sur un objet {cls} mis à jour"
+
+#: listeners/monitored.py:52
+#, python-brace-format
+msgctxt "approval"
+msgid "Post-save signal handled on new {cls}"
+msgstr "Signal post-save traité sur un nouvel objet {cls}"
+
+#: models/monitored.py:24
+#, python-brace-format
+msgctxt "approval"
+msgid "Using request user as author of {self}."
+msgstr "Utilisation de l'utilisateur connecté comme auteur de {self}."
+
+#: models/monitored.py:41
+#, fuzzy, python-brace-format
+#| msgctxt "approval"
+#| msgid "Monitored {self} was reverted to last DB state."
+msgctxt "approval"
+msgid "Monitored {obj} was reverted to last DB state."
+msgstr "L'état de l'objet à modérer {obj} a été restauré depuis la base de données."
+
+#: models/sandbox.py:22
+msgctxt "approval.moderation"
+msgid "Pending"
+msgstr "En attente"
+
+#: models/sandbox.py:23
+msgctxt "approval.moderation"
+msgid "Rejected"
+msgstr "Rejeté"
+
+#: models/sandbox.py:24
+msgctxt "approval.moderation"
+msgid "Approved"
+msgstr "Approuvé"
+
+#: models/sandbox.py:29
+msgctxt "approval.draft"
+msgid "Draft"
+msgstr "Brouillon"
+
+#: models/sandbox.py:30
+msgctxt "approval.draft"
+msgid "Waiting for moderation"
+msgstr "En attente de modération"
+
+#: models/sandbox.py:90
+msgid "UUID"
+msgstr "UUID"
+
+#: models/sandbox.py:96
+msgctxt "approval_entry"
+msgid "Data"
+msgstr "Données"
+
+#: models/sandbox.py:102
+msgctxt "approval_entry"
+msgid "Moderated"
+msgstr "Modéré"
+
+#: models/sandbox.py:110
+msgctxt "approval_entry"
+msgid "Moderated by"
+msgstr "Modéré par"
+
+#: models/sandbox.py:116
+msgctxt "approval_entry"
+msgid "Draft"
+msgstr "Brouillon"
+
+#: models/sandbox.py:118
+msgctxt "approval_entry"
+msgid "Moderated at"
+msgstr "Modéré le"
+
+#: models/sandbox.py:119
+msgctxt "approval"
+msgid "Reason"
+msgstr "Raison"
+
+#: models/sandbox.py:120
+msgctxt "approval_entry"
+msgid "Updated"
+msgstr "Mis à jour"
+
+#: models/sandbox.py:126
+#, python-brace-format
+msgctxt "approval"
+msgid "{name} approval"
+msgstr "modération de {name}"
+
+#: models/sandbox.py:127
+#, python-brace-format
+msgctxt "approval"
+msgid "{name} approvals"
+msgstr "modérations de {name}"
+
+#: models/sandbox.py:156
+msgctxt "approval"
+msgid "Updated monitored object fields using sandbox."
+msgstr ""
+"Les champs de l'objet à modérer ont été mis à jour depuis le bac à sable."
+
+#: models/sandbox.py:160
+msgctxt "approval"
+msgid "Updated monitored object fields using default values."
+msgstr ""
+"Les champs de l'objet à modérer ont été mis à jour avec des valeurs par "
+"défaut."
+
+#: models/sandbox.py:167
+msgctxt "approval"
+msgid "Updated monitored object was persisted."
+msgstr "Les modifications sur l'objet à modérer ont été persistées."
+
+#: models/sandbox.py:171
+#, python-brace-format
+msgctxt "approval"
+msgid "Field {name} could not be persisted to model."
+msgstr "Le champ {name} n'a pas pu être persisté vers le modèle."
+
+#: models/sandbox.py:202
+#, python-brace-format
+msgctxt "approval"
+msgid "Sandbox for {source} was updated."
+msgstr "Le bac à sable pour {source} a été mis à jour."
+
+#: models/sandbox.py:327
+#, fuzzy
+#| msgctxt "approval.draft"
+#| msgid "Waiting for moderation"
+msgctxt "approval"
+msgid "Set sandbox as waiting for moderation."
+msgstr "Définir le bac à sable comme en attente de modération."
+
+#: models/sandbox.py:351
+msgctxt "approval_entry"
+msgid "Congratulations, your edits have been approved."
+msgstr "Félicitations, vos modifications ont été acceptées."
+
+#: models/sandbox.py:356
+msgctxt "approval"
+msgid "Changes in sandbox were approved."
+msgstr "Les modifications du bac à sable ont été acceptées."
+
+#: models/sandbox.py:375
+msgctxt "approval_entry"
+msgid "Your edits have been refused."
+msgstr "Vos modifications ont été refusées."
+
+#: models/sandbox.py:379
+msgctxt "approval"
+msgid "Changes in sandbox were rejected."
+msgstr "Les modifications du bac à sable ont été rejetées."
+
+#, python-brace-format
+#~ msgctxt "approval"
+#~ msgid "{source_verbose_name} approval"
+#~ msgstr "modération de {source_verbose_name}"
+
+#~| msgid "Refused"
+#~ msgctxt "approval.moderation"
+#~ msgid "Refused"
+#~ msgstr "Refusé"
+
+#~ msgid "approval.moderation"
+#~ msgstr "approval.moderation"
+
+#~| msgid "Approval"
+#~ msgid "approval.draft"
+#~ msgstr "approval.draft"
+
+#~| msgid "Approval"
+#~ msgid "approval_entry"
+#~ msgstr "approval_entry"
+
+#~ msgid "Your base model must inherit from approval.models.ApprovedModel."
+#~ msgstr "Votre modèle de base doit hériter de approval.models.ApprovedModel."

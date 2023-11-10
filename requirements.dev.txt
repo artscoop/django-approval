@@ -1,0 +1,6 @@
+build  # tool to build installable pip archives
+twine  # tool to upload pip archives and wheels to PyPI repositories
+sphinx  # generate documentation publishable onto readthedocs.org
+pytest  # framework for automated tests
+pytest-django  # plugin for pytest with Django
+pdoc
