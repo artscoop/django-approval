@@ -21,7 +21,7 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/artscoop/django-approval"
 "Bug Tracker" = "https://github.com/artscoop/django-approval/issues"
-# "Documentation" = ""
+"Documentation" = "https://artscoop.github.io/django-approval/approval.html"
 
 [tool.black]
 line-length = 100

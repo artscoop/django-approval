@@ -24,4 +24,4 @@ pip install django-approval
 
 ## Documentation
 
-See the [online documentation here](#)
+See the [online documentation here](https://artscoop.github.io/django-approval/approval.html)
