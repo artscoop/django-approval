@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "django>=3.2", "django-annoying"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "approval"
+version = "0.1"
+authors = [
+  { name="Steve Kossouho", email="steve.kossouho@gmail.com" },
+]
+description = "Easily moderate any content in the admin or by code."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Framework :: Django",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/artscoop/django-approval"
+"Bug Tracker" = "https://github.com/artscoop/django-approval/issues"
+# "Documentation" = ""
+
+[tool.black]
+line-length = 100
+
+[tool.setuptools]
+package-dir = {"" = "source"}
+packages = ["approval"]
