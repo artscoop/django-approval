@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "approval"
-version = "0.1"
+version = "0.11"
 authors = [
-  { name="Steve Kossouho", email="steve.kossouho@gmail.com" },
+  { name="Steve Kossouho", email="skossouho@dawan.fr" },
 ]
-description = "Easily moderate any content in the admin or by code."
+description = "Easily moderate any content before it's visible to the public."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
