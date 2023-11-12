@@ -95,6 +95,8 @@ the object visible to the public.</p>
 <li>You create a second model to hold moderation information for the original model, by creating a class inheriting from <code>approval.models.Sandbox</code> and using <code>approval.models.SandboxMeta</code> as a metaclass.</li>
 </ol>
 
+<h3 id="example-model-and-approval-config">Example model and approval config</h3>
+
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="kn">from</span> <span class="nn"><a href="approval/models.html">approval.models</a></span> <span class="kn">import</span> <span class="n">MonitoredModel</span><span class="p">,</span> <span class="n">Sandbox</span><span class="p">,</span> <span class="n">SandboxMeta</span>
 <span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
@@ -125,8 +127,24 @@ the object visible to the public.</p>
 </code></pre>
 </div>
 
+<h3 id="attributes-and-methods">Attributes and methods</h3>
+
+<ul>
+<li><code>base</code>: <strong>mandatory</strong>, lets you define to which model the <code>ForeignKey</code> of the approval sandbox will point.</li>
+<li><code>approval_fields</code>: <strong>mandatory</strong>, which fields should go to review upon change.</li>
+<li><code>approval_store_fields</code>: which extra fields should be stored in the approval sandbox, even though they do not trigger an approval cycle by themselves. Default is <code>[]</code>.</li>
+<li><code>approval_default</code>: dictionary of values that should be applied temporary for a new object until approval. Default is <code>dict()</code></li>
+<li><code>auto_approve_staff</code>: automatically approve changes if the instance author is staff. See <code>get_authors</code>. Default is <code>True</code></li>
+<li><code>auto_approve_new</code>: automatically approve changes for new instances. Default is <code>False</code>.</li>
+<li><code>auto_approve_by_request</code>: if the instance gets a <code>reauest</code> attribute, use it to determine the author of the content. Default is <code>True</code>.</li>
+</ul>
+
 <p>The <code>Sandbox</code> model must at least implement <code>_get_authors(self)</code>, that is used to know who
 are the authors of your instance (since automatic validation can be bypassed if the author is staff, for example).</p>
+
+<p>For the sake of creating new objects with moderation capabilities, <strong>you should have a visibility
+field in your monitored model</strong>, and set its default value to <code>False</code> through the <code>approval_default</code> attribute
+of the approval model. It should mark new objects as invisible as long as a moderator has not reviewed them.</p>
 
 <hr />
 

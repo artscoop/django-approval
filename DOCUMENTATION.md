@@ -32,6 +32,8 @@ To make a model monitorable, you must follow two things:
 1. You make your model inherit from `approval.models.MonitoredModel`
 2. You create a second model to hold moderation information for the original model, by creating a class inheriting from `approval.models.Sandbox` and using `approval.models.SandboxMeta` as a metaclass.
 
+### Example model and approval config
+
 ```python
 from approval.models import MonitoredModel, Sandbox, SandboxMeta
 from django.conf import settings
@@ -61,8 +63,22 @@ class EntryApproval(Sandbox, metaclass=SandboxMeta):
         return [self.source.user]  # source refers to the source Entry instance
 ```
 
+### Attributes and methods
+
+- `base`: **mandatory**, lets you define to which model the `ForeignKey` of the approval sandbox will point.
+- `approval_fields`: **mandatory**, which fields should go to review upon change.
+- `approval_store_fields`: which extra fields should be stored in the approval sandbox, even though they do not trigger an approval cycle by themselves. Default is `[]`.
+- `approval_default`: dictionary of values that should be applied temporary for a new object until approval. Default is `dict()`
+- `auto_approve_staff`: automatically approve changes if the instance author is staff. See `get_authors`. Default is `True`
+- `auto_approve_new`: automatically approve changes for new instances. Default is `False`.
+- `auto_approve_by_request`: if the instance gets a `reauest` attribute, use it to determine the author of the content. Default is `True`.
+
 The `Sandbox` model must at least implement `_get_authors(self)`, that is used to know who
 are the authors of your instance (since automatic validation can be bypassed if the author is staff, for example).
+
+For the sake of creating new objects with moderation capabilities, **you should have a visibility
+field in your monitored model**, and set its default value to `False` through the `approval_default` attribute
+of the approval model. It should mark new objects as invisible as long as a moderator has not reviewed them.
 
 ---
 

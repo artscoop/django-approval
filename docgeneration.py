@@ -11,6 +11,9 @@ if __name__ == '__main__':
     environ.setdefault("DJANGO_SETTINGS_MODULE", "scenario.settings")
     # Setup Django machinery to load models etc.
     django.setup()
-    # Reun pdoc on the base directory
-    pdoc.pdoc("approval", output_directory=SOURCE_PATH / "documentation")
+    # Run pdoc on the base directory
+    # And generate the HTML docs in the docs directory.
+    # The name is made mandatory by Github pages, so one cannot name
+    # the folder documentation for example.
+    pdoc.pdoc("approval", output_directory=SOURCE_PATH / "docs")
 
