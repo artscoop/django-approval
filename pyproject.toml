@@ -31,5 +31,4 @@ dependencies = [
 line-length = 100
 
 [tool.setuptools]
-package-dir = {"" = "source"}
-packages = ["approval"]
+package-dir = {"" = "src"}
