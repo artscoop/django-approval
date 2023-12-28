@@ -71,7 +71,7 @@ class EntryApproval(Sandbox, metaclass=SandboxMeta):
 - `approval_default`: dictionary of values that should be applied temporary for a new object until approval. Default is `dict()`
 - `auto_approve_staff`: automatically approve changes if the instance author is staff. See `get_authors`. Default is `True`
 - `auto_approve_new`: automatically approve changes for new instances. Default is `False`.
-- `auto_approve_by_request`: if the instance gets a `reauest` attribute, use it to determine the author of the content. Default is `True`.
+- `auto_approve_by_request`: if the instance gets a `request` attribute, use it to determine the author of the content. Default is `True`.
 
 The `Sandbox` model must at least implement `_get_authors(self)`, that is used to know who
 are the authors of your instance (since automatic validation can be bypassed if the author is staff, for example).
