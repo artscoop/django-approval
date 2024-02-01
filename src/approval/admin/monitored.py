@@ -20,7 +20,8 @@ class MonitoredAdmin(ModelAdmin):
         """Return the desired object, augmented with a request attribute."""
         obj: MonitoredModel = super().get_object(request, object_id)
         if isinstance(obj, MonitoredModel):
-            if hasattr(obj, "approval") and obj.approval:
+            # Only display approval warning if the object has not been approved.
+            if hasattr(obj, "approval") and obj.approval and not obj.approval.approved:
                 obj.approval._update_source(default=False, save=False)
                 obj.request = request
                 self.message_user(
