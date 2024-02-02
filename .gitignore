@@ -7,3 +7,4 @@ __pycache__/
 *.sqlite3
 dist/
 *.egg-info
+pypi-api-token.txt
