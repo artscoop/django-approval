@@ -38,6 +38,7 @@ class EntryApproval(Sandbox, metaclass=SandboxMeta):
     auto_approve_staff = False
     auto_approve_new = False
     auto_approve_by_request = False
+    delete_on_approval = False
 
     def _get_authors(self) -> Iterable:
         return [self.source.user]
