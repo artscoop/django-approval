@@ -2,7 +2,6 @@ import logging
 from typing import Type, Optional, Iterable, Any
 from uuid import uuid4
 
-from annoying.fields import AutoOneToOneField
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
