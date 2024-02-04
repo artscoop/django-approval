@@ -7,7 +7,7 @@ import pdoc
 if __name__ == '__main__':
     # Configure environment to let Django work
     SOURCE_PATH = Path(__file__).parent
-    sys.path.append(str(SOURCE_PATH))
+    sys.path.append(str(SOURCE_PATH / "scenario"))
     environ.setdefault("DJANGO_SETTINGS_MODULE", "scenario.settings")
     # Setup Django machinery to load models etc.
     django.setup()
