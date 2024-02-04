@@ -58,6 +58,7 @@ class EntryApproval(Sandbox, metaclass=SandboxMeta):
     auto_approve_staff = False
     auto_approve_new = False
     auto_approve_by_request = False
+    delete_on_approval = False
 
     def _get_authors(self):
         return [self.source.user]  # source refers to the source Entry instance
@@ -72,6 +73,7 @@ class EntryApproval(Sandbox, metaclass=SandboxMeta):
 - `auto_approve_staff`: automatically approve changes if the instance author is staff. See `get_authors`. Default is `True`
 - `auto_approve_new`: automatically approve changes for new instances. Default is `False`.
 - `auto_approve_by_request`: if the instance gets a `request` attribute, use it to determine the author of the content. Default is `True`.
+- `delete_on_approval`: if `True`, when an instance is approved, remove the approval info attached to the object. Not recommended, `False` by default.
 
 The `Sandbox` model must at least implement `_get_authors(self)`, that is used to know who
 are the authors of your instance (since automatic validation can be bypassed if the author is staff, for example).
