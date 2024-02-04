@@ -41,11 +41,13 @@ class MonitoredModel(models.Model):
     def _get_authors(self) -> List[models.Model]:
         """Get the authors of the current instance."""
         # Use user from request as author only if allowed
-        if self.approval.auto_approve_by_request:
-            if getattr(self, "request") and getattr(self.request, "user", None):
-                logger.debug(pgettext_lazy("approval", f"Using request user as author of {self}."))
-                return [self.request.user]
-        return self.approval._get_authors()
+        if getattr(self, "approval", None):
+            if self.approval.auto_approve_by_request:
+                if getattr(self, "request") and getattr(self.request, "user", None):
+                    logger.debug(pgettext_lazy("approval", f"Using request user as author of {self}."))
+                    return [self.request.user]
+            return self.approval._get_authors()
+        return []
 
     def _revert(self) -> bool:
         """

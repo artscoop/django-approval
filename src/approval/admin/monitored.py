@@ -21,21 +21,23 @@ class MonitoredAdmin(ModelAdmin):
         obj: MonitoredModel = super().get_object(request, object_id)
         if isinstance(obj, MonitoredModel):
             # Only display approval warning if the object has not been approved.
-            if hasattr(obj, "approval") and obj.approval:
+            if getattr(obj, "approval", None) and obj.approval.approved is None:
                 obj.approval._update_source(default=False, save=False)
                 obj.request = request
-                if obj.approval.approved != True:
+                if obj.approval.approved is None:
                     self.message_user(
                         request,
-                        pgettext_lazy("approval", "This form is showing changes currently pending."),
+                        pgettext_lazy(
+                            "approval", "This form is showing changes currently pending."
+                        ),
                         level=messages.WARNING,
                     )
-            else:
-                raise ImproperlyConfigured(f"No approval model was declared for this model.")
-        return obj
+            return obj
+        else:
+            raise ImproperlyConfigured(f"No approval model was declared for this model.")
 
     @display(description=pgettext_lazy("approval", "status"), ordering="approval__approved")
     def get_approval_status(self, obj):
         if isinstance(obj, MonitoredModel) and hasattr(obj, "approval") and obj.approval:
             return obj.approval.get_approved_display()
-        return "N/A"
+        return pgettext_lazy("approval", "Unavailable")

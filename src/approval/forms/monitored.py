@@ -19,6 +19,7 @@ class MonitoredForm:
         """
         instance = kwargs.get("instance", None)
         if instance and isinstance(instance, MonitoredModel):
-            instance.approval._update_source()
-            logger.debug(pgettext_lazy("approval", f"{self.__class__.__name__} fetched approval data for form."))
+            if getattr(instance, "approval", None) and instance.approval.approved is None:
+                instance.approval._update_source()
+                logger.debug(pgettext_lazy("approval", f"{self.__class__.__name__} fetched approval data for form."))
         super().__init__(*args, **kwargs)

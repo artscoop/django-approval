@@ -44,7 +44,7 @@ class SandboxMeta(ModelBase):
                 `Approval`. For it to function properly, the developer must
                 provide some configuration in the form of 5 attributes.
             """
-
+            _is_sandbox: bool = True  # Attribute to detect dynamic class as sandbox
             MODERATION_STATUS: tuple = (
                 (None, pgettext_lazy("approval.moderation", "Pending")),
                 (False, pgettext_lazy("approval.moderation", "Rejected")),
@@ -62,9 +62,10 @@ class SandboxMeta(ModelBase):
             auto_approve_staff: bool = attrs.get("auto_approve_staff", True)
             auto_approve_new: bool = attrs.get("auto_approve_new", False)
             auto_approve_by_request: bool = attrs.get("auto_approve_by_request", True)
+            delete_on_approval: bool = attrs.get("delete_on_approval", False)
 
             uuid = models.UUIDField(default=uuid4, verbose_name=_("UUID"))
-            source = AutoOneToOneField(
+            source = models.OneToOneField(
                 source_fqmn, null=False, on_delete=models.CASCADE, related_name="approval"
             )
             sandbox = models.JSONField(
@@ -375,6 +376,10 @@ class SandboxMeta(ModelBase):
                 self._update_source(save=True)  # apply changes to monitored object
                 if save:
                     super().save()
+                # If the approval instance is to be deleted upon approval, do it here
+                if self.delete_on_approval:
+                    super().delete()
+                    logger.debug(pgettext_lazy("approval", f"Changes in sandbox were deleted upon approval."))
                 post_approval.send(self.base, instance=self.source, status=self.approved)
                 logger.debug(pgettext_lazy("approval", f"Changes in sandbox were approved."))
 
@@ -414,6 +419,10 @@ class SandboxMeta(ModelBase):
                 """
                 return None
 
+        # Patch the dynamic sandbox methods with those provided by the original class
+        for attr in attrs:
+            if callable(attrs.get(attr)):
+                setattr(DynamicSandbox, attr, attrs.get(attr))
         return DynamicSandbox
 
 
@@ -464,6 +473,10 @@ class Sandbox:
             If `True` the user in the object's request attribute, if any,
             is used to test if the object can be automatically approved.
             If `False`, use the default object author only.
+        delete_on_approval:
+            If `True`, the approval metadata will be deleted upon approval.
+            `False` by default, since you probably want to see who accepted
+            an entry and when.
     """
 
     base: Type[models.Model] = None
@@ -473,3 +486,4 @@ class Sandbox:
     auto_approve_staff: bool = True
     auto_approve_new: bool = False
     auto_approve_by_request: bool = True
+    delete_on_approval: bool = False

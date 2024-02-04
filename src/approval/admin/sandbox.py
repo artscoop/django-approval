@@ -37,6 +37,8 @@ class SandboxAdmin(ModelAdmin):
         """Accept selected approval requests."""
         for approval in queryset:
             approval.approve(user=request.user, save=True)
+        if approval.delete_on_approval:
+            self.message_user(request, _("Upon approval, deletion has been performed."))
         self.message_user(request, _("Selected edits have been accepted."))
 
     # Getter
