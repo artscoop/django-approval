@@ -30,7 +30,6 @@ def before_save(sender: Type[models.Model], instance: MonitoredModel, **kwargs):
             for obj in instance._meta.related_objects:
                 if getattr(obj.related_model, "_is_sandbox", False):
                     approval: models.Model = obj.related_model(source=instance)
-                    approval.save()
                     break
         if instance.pk is not None and getattr(instance, "approval", None):  # Sandbox updated instances only
             logger.debug(pgettext_lazy("approval", "Pre-save signal handled on updated {cls}").format(cls=sender))
@@ -56,6 +55,8 @@ def after_save(sender: Type[models.Model], instance: models.Model, **kwargs):
     """
     if issubclass(sender, MonitoredModel) and not getattr(instance, "_ignore_approval", False):
         if kwargs.get("created", False) and getattr(instance, "approval", None):
+            if not instance.approval.pk:
+                instance.approval.save()
             logger.debug(pgettext_lazy("approval", "Post-save signal handled on new {cls}").format(cls=sender))
             users = instance._get_authors()
             instance.approval._update_sandbox()
