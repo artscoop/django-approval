@@ -6,7 +6,7 @@ except ImportError:
 
 setup(
     name="django-approval",
-    version="0.15.0",
+    version="0.15.1",
     description="Easily moderate any content in Django before it's visible to the public.",
     long_description=open("README.md").read(),
     author="Steve Kossouho",
